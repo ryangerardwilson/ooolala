@@ -16,6 +16,14 @@ export function TerminalMark() {
   );
 }
 
+function GithubMark({size = 13}: {size?: number}) {
+  return (
+    <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 .3C5.37.3 0 5.67 0 12.3c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.23 1.84 1.23 1.07 1.84 2.8 1.31 3.49 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.41 1.02.01 2.04.14 3 .41 2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.62-5.47 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12.02 12.02 0 0 0 24 12.3C24 5.67 18.63.3 12 .3Z" />
+    </svg>
+  );
+}
+
 export function Button({
   children,
   variant = 'secondary',
@@ -140,6 +148,7 @@ export function OpeningPanel({status}: {status: string}) {
 export function Landing({
   authLabel = 'open web app',
   docsHref,
+  githubHref,
   installCommand,
   installCopyState,
   authCommand,
@@ -156,6 +165,7 @@ export function Landing({
 }: {
   authLabel?: string;
   docsHref?: string;
+  githubHref: string;
   installCommand: string;
   installCopyState: CopyState;
   authCommand: string;
@@ -195,6 +205,15 @@ export function Landing({
                     <span>docs</span>
                   </a>
                 )}
+                <a
+                  className="inline-flex h-7 w-7 items-center justify-center border border-transparent bg-transparent text-[var(--oo-muted)] no-underline transition hover:text-[var(--oo-fg)]"
+                  aria-label="open GitHub repository in new tab"
+                  href={githubHref}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <GithubMark />
+                </a>
                 <a
                   className="inline-flex h-7 items-center justify-center gap-1.5 whitespace-nowrap border border-[rgba(240,241,237,0.22)] bg-transparent px-2.5 font-mono text-[11px] text-[var(--oo-muted)] no-underline transition hover:border-[rgba(76,201,166,0.62)] hover:text-[var(--oo-fg)] sm:px-3"
                   aria-label="open web app in new tab"
@@ -410,11 +429,13 @@ export function DateMarker({label}: {label: string}) {
 
 export function DocsShell({
   appName,
+  githubHref,
   installCommand,
   copyStates,
   onCopyCommand
 }: {
   appName: string;
+  githubHref: string;
   installCommand: string;
   copyStates: Record<string, CopyState>;
   onCopyCommand: (key: string, command: string) => void;
@@ -429,12 +450,22 @@ export function DocsShell({
     <layout.Surface>
       <main className="h-[100svh] overflow-hidden bg-[var(--oo-bg)] text-[var(--oo-fg)]">
         <div className="mx-auto flex h-full w-full max-w-[1080px] flex-col px-4 py-3 sm:px-6">
-          <header className="flex h-10 shrink-0 items-center border-b border-[var(--oo-line)]">
+          <header className="flex h-10 shrink-0 items-center justify-between border-b border-[var(--oo-line)]">
             <layout.Inline>
               <TerminalMark />
               <span className="text-sm font-semibold">ooolala</span>
               <span className="font-mono text-[11px] text-[var(--oo-muted)]">docs</span>
             </layout.Inline>
+            <a
+              className="inline-flex h-7 items-center justify-center gap-1.5 whitespace-nowrap border border-transparent bg-transparent px-2 font-mono text-[11px] text-[var(--oo-muted)] no-underline transition hover:text-[var(--oo-fg)]"
+              aria-label="open GitHub repository in new tab"
+              href={githubHref}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <GithubMark />
+              <span className="hidden sm:inline">github</span>
+            </a>
           </header>
 
           <div className="grid min-h-0 flex-1 gap-4 pt-4 md:grid-cols-[172px_minmax(0,1fr)]">

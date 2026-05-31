@@ -58,6 +58,7 @@ type WebChatProps = {
 const webEnv = import.meta.env ?? {};
 const appName = webEnv.VITE_OOOLALA_APP_NAME || 'ooolala';
 const installCommand = webEnv.VITE_OOOLALA_INSTALL_COMMAND || defaultInstallCommand();
+const githubHref = 'https://github.com/ryangerardwilson/ooolala';
 const welcomeUser = webEnv.VITE_OOOLALA_WELCOME_USER || 'bob';
 const webPath = '/web';
 const docsPath = '/docs';
@@ -903,6 +904,7 @@ function LandingPage({
       onCopyTui={() => void copyLandingCommand('tui', tuiCommand)}
       authLabel="open web app"
       docsHref={docsPath}
+      githubHref={githubHref}
       webHref={webPath}
     />
   );
@@ -938,6 +940,7 @@ function DocsPage() {
   return (
     <widgets.DocsShell
       appName={appName}
+      githubHref={githubHref}
       installCommand={installCommand}
       copyStates={copyStates}
       onCopyCommand={(key, command) => void copyCommand(key as DocsCommandKey, command)}
