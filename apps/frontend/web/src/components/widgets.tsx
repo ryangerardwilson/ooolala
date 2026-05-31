@@ -457,14 +457,13 @@ export function DocsShell({
               <span className="font-mono text-[11px] text-[var(--oo-muted)]">docs</span>
             </layout.Inline>
             <a
-              className="inline-flex h-7 items-center justify-center gap-1.5 whitespace-nowrap border border-transparent bg-transparent px-2 font-mono text-[11px] text-[var(--oo-muted)] no-underline transition hover:text-[var(--oo-fg)]"
+              className="inline-flex h-7 w-7 items-center justify-center border border-transparent bg-transparent text-[var(--oo-muted)] no-underline transition hover:text-[var(--oo-fg)]"
               aria-label="open GitHub repository in new tab"
               href={githubHref}
               rel="noreferrer"
               target="_blank"
             >
               <GithubMark />
-              <span className="hidden sm:inline">github</span>
             </a>
           </header>
 
