@@ -53,13 +53,11 @@ ooolala watch bob incoming
 ooolala open bob
 ooolala close bob
 ooolala tui
-ooolala web
 ooolala skills
 ```
 
 `ooolala signout` clears saved local credentials without changing the backend
-account. `ooolala tui` launches the Ink TUI using saved CLI auth. `ooolala web`
-opens the hosted web app and hands off saved CLI auth to the browser.
+account. `ooolala tui` launches the Ink TUI using saved CLI auth.
 Bob is the public welcome account for first DMs.
 `ooolala skills` prints the agent-facing instructions from `SKILLS.md`.
 
@@ -104,7 +102,6 @@ Use the dev CLI from another terminal:
 scripts/dev/run-cli.sh auth user3
 scripts/dev/run-cli.sh send bob "hello from dev"
 scripts/dev/run-cli.sh tui
-scripts/dev/run-cli.sh web
 ```
 
 The dev CLI stores credentials under `.dev/ooolala-home`, so it does not touch

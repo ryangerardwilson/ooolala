@@ -35,11 +35,10 @@ usage:
   scripts/dev/run-cli.sh auth <username>
   scripts/dev/run-cli.sh send <peer> "hello"
   scripts/dev/run-cli.sh tui
-  scripts/dev/run-cli.sh web
 
 notes:
   Start the dev servers first with scripts/dev/run-servers.sh.
-  This helper reads .dev/dev.env and sets OOOLALA_API/OOOLALA_WEB_URL for the terminal client.
+  This helper reads .dev/dev.env and sets OOOLALA_API for the terminal client.
   Dev CLI state defaults to .dev/ooolala-home.
 TXT
 }
@@ -53,9 +52,8 @@ cd "$ROOT"
 ensure_node_deps
 
 api_url="${OOOLALA_API:-}"
-web_url="${OOOLALA_WEB_URL:-}"
 
-if [[ -z "$api_url" || -z "$web_url" ]]; then
+if [[ -z "$api_url" ]]; then
   if [[ ! -f "$DEV_ENV" ]]; then
     printf 'dev backend URL not found. Start servers first:\n  scripts/dev/run-servers.sh\n' >&2
     exit 1
@@ -64,7 +62,6 @@ if [[ -z "$api_url" || -z "$web_url" ]]; then
   # shellcheck source=/dev/null
   source "$DEV_ENV"
   api_url="${api_url:-${OOOLALA_DEV_API_URL:-}}"
-  web_url="${web_url:-${OOOLALA_DEV_WEB_URL:-}}"
 fi
 
 if [[ -z "$api_url" ]]; then
@@ -77,15 +74,9 @@ if ! curl -fsS "$api_url/health" >/dev/null 2>&1; then
   exit 1
 fi
 
-if [[ "${1:-}" == "web" && -z "$web_url" ]]; then
-  printf 'dev web URL missing from %s. Restart servers with scripts/dev/run-servers.sh\n' "$DEV_ENV" >&2
-  exit 1
-fi
-
 mkdir -p "$OOOLALA_HOME_VALUE"
 exec env \
   OOOLALA_API="$api_url" \
-  OOOLALA_WEB_URL="$web_url" \
   OOOLALA_ENV=dev \
   OOOLALA_HOME="$OOOLALA_HOME_VALUE" \
   OOOLALA_COMMAND_HINT="scripts/dev/run-cli.sh" \

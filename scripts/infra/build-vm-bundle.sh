@@ -112,7 +112,6 @@ tar -xzf "\$tmp/ooolala-source.tar.gz" -C "\$tmp/source"
     OOOLALA_CHANNEL="\$channel" \\
     OOOLALA_INSTALL_ROOT="\$install_root" \\
     OOOLALA_DEFAULT_API_URL="\$api_url" \\
-    OOOLALA_DEFAULT_WEB_URL="\$base_url" \\
     OOOLALA_WELCOME_USER="\$welcome_user" \\
     OOOLALA_INSTALL_URL="\${base_url%/}/install.sh" \\
     ./install.sh "\$@"

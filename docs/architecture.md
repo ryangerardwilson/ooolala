@@ -154,8 +154,6 @@ The CLI should stay compact and backend-backed:
   bundle; it must not require backend auth, polling, or a separate docs
   service. `/web` serves the browser app surface; unauthenticated users see
   sign-in there, and account creation stays in `ooolala auth`.
-- `ooolala web` opens the React web client in the user's browser with a
-  transient CLI auth handoff and enters chat directly.
 - Hosted terminal clients install production as `ooolala` with state under
   `~/.ooolala`; local dev wrappers isolate test state under `.dev/`.
 - `ooolala config` opens the real local config file.

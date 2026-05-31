@@ -4,7 +4,7 @@ import {chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, sta
 import {basename, dirname, join, resolve} from 'node:path';
 import {createInterface} from 'node:readline/promises';
 import {fileURLToPath} from 'node:url';
-import {homedir, platform, tmpdir} from 'node:os';
+import {homedir, tmpdir} from 'node:os';
 
 type RunResult = {
   status: number;
@@ -51,7 +51,6 @@ type ApiResult = {
 class CommandError extends Error {}
 
 const fallbackApiUrl = 'https://ooolala.ryangerardwilson.com/api';
-const fallbackWebUrl = 'https://ooolala.ryangerardwilson.com';
 const configOrder = ['handle', 'username', 'password'];
 
 const helpTemplate = `Ooolala
@@ -102,10 +101,6 @@ commands:
   launch the terminal UI
   # tui
   ooolala tui
-
-  open the web UI in your browser
-  # web
-  ooolala web
 
   open the user-editable config
   # config
@@ -162,10 +157,6 @@ async function dispatch(argv: string[], stdin?: string): Promise<string> {
   if (argv.length === 1 && argv[0] === 'tui') {
     launchTui();
     return '';
-  }
-
-  if (argv.length === 1 && argv[0] === 'web') {
-    return launchWeb();
   }
 
   if (argv.length === 1 && argv[0] === 'config') {
@@ -689,10 +680,10 @@ function localVersionLines() {
     `product_version ${version()}`,
     `commit ${process.env.OOOLALA_COMMIT || process.env.GITHUB_SHA || 'local'}`,
     `environment ${process.env.OOOLALA_ENV || process.env.NODE_ENV || 'client'}`,
-    'cli_contract 7',
+    'cli_contract 8',
     'chat_protocol 1..3',
     'auth_policy 7',
-    'ui_flow 11'
+    'ui_flow 12'
   ];
 }
 
@@ -894,71 +885,6 @@ function launchTui() {
     OOOLALA_USERNAME: credentials.username,
     OOOLALA_PASSWORD: credentials.password
   });
-}
-
-function launchWeb() {
-  const credentials = requireCredentials();
-  const url = webLaunchUrl(credentials);
-  openBrowser(url);
-  return `opened ${webSurfaceUrl()}\n`;
-}
-
-function webLaunchUrl(credentials: Credentials) {
-  return `${webSurfaceUrl()}#ooolala=${encodeBrowserAuth(credentials)}`;
-}
-
-function webUrl() {
-  return (process.env.OOOLALA_WEB_URL || process.env.OOOLALA_DEFAULT_WEB_URL || fallbackWebUrl).replace(/\/+$/, '');
-}
-
-function webSurfaceUrl() {
-  const root = webUrl();
-  return root.endsWith('/web') ? root : `${root}/web`;
-}
-
-function openBrowser(url: string) {
-  const customBrowser = process.env.BROWSER;
-
-  if (customBrowser) {
-    const [command, ...args] = splitShellWords(customBrowser);
-    if (!command) throw new CommandError('BROWSER is empty\n');
-    runBrowser(command, browserArgs(args, url));
-    return;
-  }
-
-  if (platform() === 'darwin') {
-    runBrowser('open', [url]);
-    return;
-  }
-
-  if (platform() === 'win32') {
-    runBrowser('cmd', ['/c', 'start', '', url]);
-    return;
-  }
-
-  runBrowser('xdg-open', [url]);
-}
-
-function browserArgs(args: string[], url: string) {
-  if (args.some((arg) => arg.includes('%s'))) {
-    return args.map((arg) => arg.replace(/%s/g, url));
-  }
-
-  return [...args, url];
-}
-
-function runBrowser(command: string, args: string[]) {
-  const result = spawnSync(command, args, {stdio: 'ignore', env: process.env});
-  if (result.error) throw new CommandError(`could not open browser: ${result.error.message}\n`);
-  if ((result.status ?? 1) !== 0) throw new CommandError('could not open browser; set BROWSER\n');
-}
-
-function encodeBrowserAuth(credentials: Credentials) {
-  return Buffer.from(JSON.stringify({
-    username: credentials.username,
-    password: credentials.password,
-    apiUrl: apiUrl()
-  })).toString('base64url');
 }
 
 function runInteractive(command: string, args: string[], cwd: string, env: NodeJS.ProcessEnv = {}) {

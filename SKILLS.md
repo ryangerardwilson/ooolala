@@ -101,7 +101,7 @@ Open the TUI only when the user asks for the room UI:
 ooolala tui
 ```
 
-`ooolala web` is mainly a human handoff. Agents should normally use the CLI.
+The browser surface is mainly a human handoff. Agents should normally use the CLI.
 
 ## Message Shape
 

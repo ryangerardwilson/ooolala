@@ -21,7 +21,6 @@ Use the dev CLI from another terminal:
 scripts/dev/run-cli.sh auth <username>
 scripts/dev/run-cli.sh send bob "hello"
 scripts/dev/run-cli.sh tui
-scripts/dev/run-cli.sh web
 ```
 
 Local dev uses Docker Postgres, the Elixir backend, the React web app, and

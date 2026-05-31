@@ -2,12 +2,12 @@ defmodule Ooolala.Version do
   @moduledoc "Shared product and compatibility contract versions."
 
   @product_version Mix.Project.config()[:version]
-  @cli_contract 7
+  @cli_contract 8
   @chat_protocol_min 1
   @chat_protocol_max 3
   @db_schema 7
   @auth_policy 7
-  @ui_flow 11
+  @ui_flow 12
   @compile_env Mix.env() |> to_string()
 
   def product_version, do: @product_version

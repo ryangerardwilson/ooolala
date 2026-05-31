@@ -1,5 +1,5 @@
 import type {ButtonHTMLAttributes, FormEventHandler, InputHTMLAttributes, MouseEventHandler, ReactNode} from 'react';
-import {BookOpen, Copy, Download, ExternalLink, Terminal} from 'lucide-react';
+import {BookOpen, Copy, Download, ExternalLink} from 'lucide-react';
 import * as layout from './layout';
 import {TerminalSignalWordmark} from './terminal-signal';
 
@@ -411,20 +411,17 @@ export function DateMarker({label}: {label: string}) {
 export function DocsShell({
   appName,
   installCommand,
-  webHref,
   copyStates,
   onCopyCommand
 }: {
   appName: string;
   installCommand: string;
-  webHref: string;
   copyStates: Record<string, CopyState>;
   onCopyCommand: (key: string, command: string) => void;
 }) {
   const authCommand = `${appName} auth`;
   const firstMessageCommand = `${appName} send bob "hello"`;
   const tuiCommand = `${appName} tui`;
-  const webCommand = `${appName} web`;
   const versionCommand = `${appName} version`;
   const skillsCommand = `${appName} skills`;
 
@@ -432,26 +429,12 @@ export function DocsShell({
     <layout.Surface>
       <main className="h-[100svh] overflow-hidden bg-[var(--oo-bg)] text-[var(--oo-fg)]">
         <div className="mx-auto flex h-full w-full max-w-[1080px] flex-col px-4 py-3 sm:px-6">
-          <header className="flex h-10 shrink-0 items-center justify-between border-b border-[var(--oo-line)]">
+          <header className="flex h-10 shrink-0 items-center border-b border-[var(--oo-line)]">
             <layout.Inline>
               <TerminalMark />
               <span className="text-sm font-semibold">ooolala</span>
               <span className="font-mono text-[11px] text-[var(--oo-muted)]">docs</span>
             </layout.Inline>
-            <nav className="flex items-center gap-2">
-              <a className="font-mono text-[11px] text-[var(--oo-muted)] no-underline hover:text-[var(--oo-fg)]" href="/">
-                home
-              </a>
-              <a
-                className="inline-flex h-7 items-center justify-center gap-1.5 border border-[var(--oo-line)] px-2.5 font-mono text-[11px] text-[var(--oo-muted)] no-underline hover:border-[var(--oo-accent)] hover:text-[var(--oo-fg)]"
-                href={webHref}
-                rel="noreferrer"
-                target="_blank"
-              >
-                <Terminal size={13} aria-hidden="true" />
-                open web app
-              </a>
-            </nav>
           </header>
 
           <div className="grid min-h-0 flex-1 gap-4 pt-4 md:grid-cols-[172px_minmax(0,1fr)]">
@@ -463,7 +446,6 @@ export function DocsShell({
                   ['messages', '#messages'],
                   ['files', '#files'],
                   ['TUI', '#tui'],
-                  ['web', '#web'],
                   ['versions', '#versions'],
                   ['agents', '#agents']
                 ].map(([label, href]) => (
@@ -482,10 +464,10 @@ export function DocsShell({
                     Ooolala docs
                   </h1>
                   <p className="mt-2 max-w-[560px] text-sm leading-6 text-[var(--oo-muted)]">
-                    Install, auth, send DMs, move files, open the TUI or web app, check versions, and print agent instructions.
+                    Install, auth, send DMs, move files, open the TUI, check versions, and print agent instructions.
                   </p>
                   <p className="mt-2 max-w-[560px] text-xs leading-5 text-[var(--oo-muted)]">
-                    CLI first. TUI second. Web third. Account creation stays in terminal auth.
+                    CLI first. TUI second. Browser surface third. Account creation stays in terminal auth.
                   </p>
                   <div className="mt-4 grid w-full max-w-[620px] gap-2">
                     <CopyCommand
@@ -556,14 +538,6 @@ export function DocsShell({
                   <DocsGrid>
                     <CopyCommand command={tuiCommand} copyState={copyStates.tui || 'idle'} copyLabel="tui" title="launch" onCopy={() => onCopyCommand('tui', tuiCommand)} />
                     <StaticCommand title="keys" command={'j/k move\nenter opens chat\nesc returns to chats\nn starts a new chat\ndd closes a chat'} />
-                  </DocsGrid>
-                </DocsSection>
-
-                <DocsSection id="web" title="Web">
-                  <p>Use web when a browser surface is useful. Account creation stays in the terminal.</p>
-                  <DocsGrid>
-                    <CopyCommand command={webCommand} copyState={copyStates.web || 'idle'} copyLabel="web" title="open" onCopy={() => onCopyCommand('web', webCommand)} />
-                    <StaticCommand title="browser path" command="/web" />
                   </DocsGrid>
                 </DocsSection>
 

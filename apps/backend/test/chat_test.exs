@@ -16,11 +16,11 @@ defmodule OoolalaChatTest do
 
   test "exposes monotonic compatibility contracts" do
     assert Version.product_version() =~ ~r/^\d+\.\d+\.\d+$/
-    assert Version.cli_contract() == 7
+    assert Version.cli_contract() == 8
     assert Version.chat_protocol_min() == 1
     assert Version.chat_protocol_max() == 3
     assert Version.db_schema() == 7
     assert Version.auth_policy() == 7
-    assert Version.ui_flow() == 11
+    assert Version.ui_flow() == 12
   end
 end

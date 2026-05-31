@@ -64,8 +64,8 @@ ooolala send bob "hello"
 ooolala tui
 ```
 
-`ooolala web` is valid, but the public first path should stay CLI-first unless
-the product contract changes.
+Browser sign-in is valid, but the public first path should stay CLI-first
+unless the product contract changes.
 Bob is the public welcome account for first DMs.
 `ooolala skills` prints the agent-facing usage instructions.
 

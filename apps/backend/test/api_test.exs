@@ -74,12 +74,12 @@ defmodule OoolalaTest do
     vector = Ooolala.version_vector()
 
     assert vector.product_version =~ ~r/^\d+\.\d+\.\d+$/
-    assert vector.cli_contract == 7
+    assert vector.cli_contract == 8
     assert vector.chat_protocol == %{min: 1, max: 3}
     assert vector.db_schema.latest == 7
     assert vector.db_schema.store in ["memory", "postgres"]
     assert vector.auth_policy == 7
-    assert vector.ui_flow == 11
+    assert vector.ui_flow == 12
   end
 
   test "direct messages require a known recipient username" do

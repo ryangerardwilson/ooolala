@@ -913,7 +913,6 @@ type DocsCommandKey =
   | 'auth'
   | 'send'
   | 'tui'
-  | 'web'
   | 'version'
   | 'skills';
 
@@ -923,7 +922,6 @@ function DocsPage() {
     auth: 'idle',
     send: 'idle',
     tui: 'idle',
-    web: 'idle',
     version: 'idle',
     skills: 'idle'
   });
@@ -941,7 +939,6 @@ function DocsPage() {
     <widgets.DocsShell
       appName={appName}
       installCommand={installCommand}
-      webHref={webPath}
       copyStates={copyStates}
       onCopyCommand={(key, command) => void copyCommand(key as DocsCommandKey, command)}
     />

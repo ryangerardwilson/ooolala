@@ -234,7 +234,6 @@ dev cli:
   scripts/dev/run-cli.sh auth <username>
   scripts/dev/run-cli.sh send <peer> "hello"
   scripts/dev/run-cli.sh tui
-  scripts/dev/run-cli.sh web
 
 logs:
   backend: $BACKEND_LOG

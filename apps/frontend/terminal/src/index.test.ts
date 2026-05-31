@@ -1,5 +1,5 @@
 import {createServer} from 'node:http';
-import {chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
+import {mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import test from 'node:test';
@@ -37,7 +37,7 @@ test('no args bootstraps auth on first run', async () => {
 });
 
 test('removed aliases are unsupported', async () => {
-  for (const argv of [['-h'], ['-v'], ['-u'], ['signup', 'user3'], ['dm', 'bob', 'hello'], ['conf'], ['remove', 'bob'], ['forget', 'bob']]) {
+  for (const argv of [['-h'], ['-v'], ['-u'], ['signup', 'user3'], ['dm', 'bob', 'hello'], ['web'], ['conf'], ['remove', 'bob'], ['forget', 'bob']]) {
     const result = await run(argv);
 
     assert.equal(result.status, 1);
@@ -66,7 +66,6 @@ test('help and errors use the installed app name', async () => {
 
     assert.equal(help.status, 0);
     assert.match(help.stdout, /ooolala-dev tui/);
-    assert.match(help.stdout, /ooolala-dev web/);
     assert.equal(unknown.status, 1);
     assert.equal(unknown.stderr, 'unknown command; try: ooolala-dev help\n');
   } finally {
@@ -260,41 +259,10 @@ test('open and close update the backend chat list', async () => {
   });
 });
 
-test('web opens the browser with transient auth handoff', async () => {
-  await withServer(async (url) => {
-    await withHome(async (home) => {
-      const browserScript = join(home, 'browser.mjs');
-      const browserLog = join(home, 'browser.log');
-
-      writeFileSync(browserScript, `
-        import {writeFileSync} from 'node:fs';
-        writeFileSync(process.env.OOOLALA_BROWSER_LOG, process.argv[2]);
-      `);
-      chmodSync(browserScript, 0o755);
-
-      process.env.BROWSER = `${process.execPath} ${browserScript}`;
-      process.env.OOOLALA_BROWSER_LOG = browserLog;
-      process.env.OOOLALA_API = url;
-      process.env.OOOLALA_DEFAULT_WEB_URL = 'https://web.example/';
-
-      await run(['auth', 'user2'], '1234\n');
-      const result = await run(['web']);
-
-      assert.equal(result.status, 0);
-      assert.equal(result.stdout, 'opened https://web.example/web\n');
-      assert.match(readFileSync(browserLog, 'utf8'), /^https:\/\/web\.example\/web#ooolala=/);
-    });
-  });
-});
-
 async function withHome(callback: (home: string) => Promise<void>) {
   const oldHome = process.env.OOOLALA_HOME;
   const oldApi = process.env.OOOLALA_API;
-  const oldBrowser = process.env.BROWSER;
-  const oldBrowserLog = process.env.OOOLALA_BROWSER_LOG;
-  const oldWebUrl = process.env.OOOLALA_WEB_URL;
   const oldDefaultApi = process.env.OOOLALA_DEFAULT_API_URL;
-  const oldDefaultWebUrl = process.env.OOOLALA_DEFAULT_WEB_URL;
   const oldCommandHint = process.env.OOOLALA_COMMAND_HINT;
   const oldAuthHint = process.env.OOOLALA_AUTH_HINT;
   const oldWelcomeUser = process.env.OOOLALA_WELCOME_USER;
@@ -303,9 +271,7 @@ async function withHome(callback: (home: string) => Promise<void>) {
   try {
     process.env.OOOLALA_HOME = home;
     delete process.env.OOOLALA_API;
-    delete process.env.OOOLALA_WEB_URL;
     delete process.env.OOOLALA_DEFAULT_API_URL;
-    delete process.env.OOOLALA_DEFAULT_WEB_URL;
     delete process.env.OOOLALA_COMMAND_HINT;
     delete process.env.OOOLALA_AUTH_HINT;
     delete process.env.OOOLALA_WELCOME_USER;
@@ -317,20 +283,8 @@ async function withHome(callback: (home: string) => Promise<void>) {
     if (oldApi === undefined) delete process.env.OOOLALA_API;
     else process.env.OOOLALA_API = oldApi;
 
-    if (oldBrowser === undefined) delete process.env.BROWSER;
-    else process.env.BROWSER = oldBrowser;
-
-    if (oldBrowserLog === undefined) delete process.env.OOOLALA_BROWSER_LOG;
-    else process.env.OOOLALA_BROWSER_LOG = oldBrowserLog;
-
-    if (oldWebUrl === undefined) delete process.env.OOOLALA_WEB_URL;
-    else process.env.OOOLALA_WEB_URL = oldWebUrl;
-
     if (oldDefaultApi === undefined) delete process.env.OOOLALA_DEFAULT_API_URL;
     else process.env.OOOLALA_DEFAULT_API_URL = oldDefaultApi;
-
-    if (oldDefaultWebUrl === undefined) delete process.env.OOOLALA_DEFAULT_WEB_URL;
-    else process.env.OOOLALA_DEFAULT_WEB_URL = oldDefaultWebUrl;
 
     if (oldCommandHint === undefined) delete process.env.OOOLALA_COMMAND_HINT;
     else process.env.OOOLALA_COMMAND_HINT = oldCommandHint;
