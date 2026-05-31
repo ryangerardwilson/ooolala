@@ -5,6 +5,12 @@ defmodule Ooolala.RoomStorePostgres do
   This adapter intentionally uses the standard `psql` client instead of a Hex
   dependency so the local dev loop does not depend on the host Erlang package
   set being complete before the database path can run.
+
+  This is a prototype operating choice, not a permanent architecture claim.
+  `System.cmd/3` passes arguments directly instead of shell-interpolating SQL,
+  and regression tests cover the literal/row parsing edge cases. Move to
+  Postgrex before raising production caps materially or adding broader public
+  API surface.
   """
 
   use GenServer
@@ -54,7 +60,8 @@ defmodule Ooolala.RoomStorePostgres do
       case limit do
         :all ->
           """
-          SELECT id, room, author, encode(convert_to(body, 'UTF8'), 'hex'),
+          SELECT id, encode(convert_to(room, 'UTF8'), 'hex'),
+            encode(convert_to(author, 'UTF8'), 'hex'), encode(convert_to(body, 'UTF8'), 'hex'),
             to_char(inserted_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"')
           FROM messages
           WHERE room = #{literal(room)}
@@ -65,7 +72,9 @@ defmodule Ooolala.RoomStorePostgres do
           """
           SELECT id, room, author, body_hex, inserted_at
           FROM (
-            SELECT id, room, author, encode(convert_to(body, 'UTF8'), 'hex') AS body_hex,
+            SELECT id, encode(convert_to(room, 'UTF8'), 'hex') AS room,
+              encode(convert_to(author, 'UTF8'), 'hex') AS author,
+              encode(convert_to(body, 'UTF8'), 'hex') AS body_hex,
               to_char(inserted_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS inserted_at
             FROM messages
             WHERE room = #{literal(room)}
@@ -96,9 +105,13 @@ defmodule Ooolala.RoomStorePostgres do
 
   def list_rooms(server \\ __MODULE__) do
     database_url(server)
-    |> run_sql!("SELECT DISTINCT room FROM messages ORDER BY room ASC")
+    |> run_sql!("""
+    SELECT DISTINCT encode(convert_to(room, 'UTF8'), 'hex') AS room_hex
+    FROM messages
+    ORDER BY room_hex ASC
+    """)
     |> parse_rows()
-    |> Enum.map(fn [room] -> room end)
+    |> Enum.map(fn [room_hex] -> decode_hex!(room_hex) end)
   end
 
   def ensure_dm_chat(username, peer, room, server \\ __MODULE__) do
@@ -400,6 +413,8 @@ defmodule Ooolala.RoomStorePostgres do
   end
 
   defp row_to_message([id, room, author, body_hex, inserted_at]) do
+    room = decode_hex!(room)
+    author = decode_hex!(author)
     body = decode_hex!(body_hex)
     {:ok, inserted_at, 0} = DateTime.from_iso8601(inserted_at)
     Message.new(room, author, body, id: id, inserted_at: inserted_at)

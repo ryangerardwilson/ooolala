@@ -85,6 +85,11 @@ environments:
 - `OOOLALA_STORE=memory` is available only for throwaway runs and narrow tests.
 - The first Postgres adapter uses the standard `psql` client instead of a Hex
   package so an incomplete local Erlang install cannot block the DB path.
+- The hand-rolled HTTP edge and `psql` adapter are acceptable only inside the
+  current capped single-VM prototype. They must remain covered by direct edge
+  and adapter regression tests. Before materially raising production caps or
+  adding more public API surface, move the HTTP edge to Plug/Cowboy and the DB
+  adapter to Postgrex or justify a fresh first-principles exception.
 
 The current message model is append-oriented. Restarts, redeploys, and client
 polling should all replay from the same durable `messages` table instead of

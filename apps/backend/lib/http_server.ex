@@ -3,6 +3,9 @@ defmodule Ooolala.HttpServer do
 
   use GenServer
 
+  @default_max_header_bytes 16 * 1_024
+  @default_max_body_bytes 24 * 1_024 * 1_024
+
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
@@ -44,8 +47,14 @@ defmodule Ooolala.HttpServer do
 
   defp handle_client(client) do
     case read_request(client) do
-      {:ok, request} -> :gen_tcp.send(client, response_for(request))
-      {:error, _reason} -> :ok
+      {:ok, request} ->
+        :gen_tcp.send(client, response_for(request))
+
+      {:error, :request_too_large} ->
+        :gen_tcp.send(client, response(413, "text/plain", "request too large\n"))
+
+      {:error, _reason} ->
+        :ok
     end
 
     :gen_tcp.close(client)
@@ -56,10 +65,10 @@ defmodule Ooolala.HttpServer do
       {:ok, chunk} ->
         next = acc <> chunk
 
-        if request_complete?(next) do
-          {:ok, next}
-        else
-          read_request(client, next)
+        case request_status(next) do
+          :complete -> {:ok, next}
+          :incomplete -> read_request(client, next)
+          error -> error
         end
 
       error ->
@@ -67,9 +76,14 @@ defmodule Ooolala.HttpServer do
     end
   end
 
-  defp request_complete?(request) do
+  # The VM nginx config is a useful outer guard, but the backend must still be
+  # self-bounding. This keeps the hand-rolled edge reviewable until real usage
+  # earns Plug/Cowboy.
+  defp request_status(request) do
     case String.split(request, "\r\n\r\n", parts: 2) do
       [head, body] ->
+        header_bytes = byte_size(head) + 4
+
         content_length =
           head
           |> String.split("\r\n")
@@ -77,10 +91,20 @@ defmodule Ooolala.HttpServer do
           |> Map.get("content-length", "0")
           |> parse_content_length()
 
-        byte_size(body) >= content_length
+        cond do
+          header_bytes > max_header_bytes() -> {:error, :request_too_large}
+          content_length > max_body_bytes() -> {:error, :request_too_large}
+          byte_size(body) > max_body_bytes() -> {:error, :request_too_large}
+          byte_size(body) >= content_length -> :complete
+          true -> :incomplete
+        end
 
       _ ->
-        false
+        if byte_size(request) > max_header_bytes() do
+          {:error, :request_too_large}
+        else
+          :incomplete
+        end
     end
   end
 
@@ -543,14 +567,32 @@ defmodule Ooolala.HttpServer do
     escaped =
       value
       |> to_string()
-      |> String.replace("\\", "\\\\")
-      |> String.replace("\"", "\\\"")
-      |> String.replace("\n", "\\n")
-      |> String.replace("\r", "\\r")
-      |> String.replace("\t", "\\t")
+      |> String.to_charlist()
+      |> Enum.map_join(&json_escape_char/1)
 
     "\"#{escaped}\""
   end
+
+  # JSON is still encoded locally to avoid adding a framework/dependency for the
+  # current small edge, so this has to escape the full control-character surface
+  # instead of only the common newline/tab cases.
+  defp json_escape_char(?"), do: "\\\""
+  defp json_escape_char(?\\), do: "\\\\"
+  defp json_escape_char(?\b), do: "\\b"
+  defp json_escape_char(?\f), do: "\\f"
+  defp json_escape_char(?\n), do: "\\n"
+  defp json_escape_char(?\r), do: "\\r"
+  defp json_escape_char(?\t), do: "\\t"
+
+  defp json_escape_char(char) when char < 0x20 do
+    char
+    |> Integer.to_string(16)
+    |> String.upcase()
+    |> String.pad_leading(4, "0")
+    |> then(&"\\u#{&1}")
+  end
+
+  defp json_escape_char(char), do: <<char::utf8>>
 
   defp header_filename(filename) do
     filename
@@ -596,5 +638,26 @@ defmodule Ooolala.HttpServer do
 
   defp password_error do
     "password must be at least #{Ooolala.Auth.password_min_length()} characters\n"
+  end
+
+  defp max_header_bytes do
+    env_integer("OOOLALA_MAX_HTTP_HEADER_BYTES", @default_max_header_bytes)
+  end
+
+  defp max_body_bytes do
+    env_integer("OOOLALA_MAX_HTTP_BODY_BYTES", @default_max_body_bytes)
+  end
+
+  defp env_integer(name, fallback) do
+    case System.get_env(name) do
+      nil ->
+        fallback
+
+      value ->
+        case Integer.parse(value) do
+          {integer, ""} when integer > 0 -> integer
+          _ -> fallback
+        end
+    end
   end
 end
