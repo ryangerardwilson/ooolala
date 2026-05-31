@@ -96,6 +96,29 @@ Microcopy is product design in words. It must help the user act with less
 uncertainty at the exact moment of action. It is not marketing copy and must
 preserve Ooolala's CLI-first, TUI-second, web-third priority.
 
+## Brand Guidelines Contract
+
+Use `BRAND_GUIDELINES.md` when judging public product surfaces, product names,
+navigation labels, CTAs, onboarding, landing-page hierarchy, docs entry points,
+and any product/design decision that changes what users believe Ooolala is.
+
+Brand is part of product shape, not a CMO-only polish pass. The CPO must keep
+the interface aligned with the canonical positioning:
+
+- Ooolala is CLI-first, TUI-second, web-third chat for terminal-heavy Codex and
+  Claude sessions.
+- The command name is `ooolala`; prose uses `Ooolala`.
+- Public first-run flow should remain CLI-first unless CEO changes the product
+  contract.
+- Web can be polished, but it must feel like an extension of the CLI rather
+  than a generic SaaS surface.
+- Public product surfaces must not sell staging, deployment machinery, seeded
+  users, speculative infrastructure, or vague platform claims.
+
+CPO owns whether the design expresses the brand promise through behavior,
+surface priority, hierarchy, and affordances. CMO owns final wording, but CPO
+must block designs whose structure forces weak, bloated, or misleading copy.
+
 ## White-Space Contract
 
 Use `subagents/cpo/WHITE_SPACE.md` when judging spacing, density, grouping,
@@ -160,6 +183,8 @@ CFO owns cost constraints. CEO resolves unresolved conflicts.
 - Do copy buttons copy only commands that can be pasted and executed as-is?
 - Does TUI/web preserve identity, DM, room, message, auth, and sync?
 - Is the empty state actionable?
+- Does the surface match `BRAND_GUIDELINES.md` in naming, positioning, and
+  public first-run flow?
 - Has white space been used to group, separate, and isolate the primary action?
 - Did real friction create a durable command, default, layout, recovery, or
   error improvement?
