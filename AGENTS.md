@@ -113,8 +113,9 @@ The other executive roles report upward through the CEO:
 - CPO: exacting about antifragile product and design direction. Owns product
   flow, surface priority, visual direction, component design rules,
   CLI/TUI/web interaction shape, friction removal, and whether stress from real
-  usage improves the product. CPO must apply `BRAND_GUIDELINES.md` as product
-  context, not merely copy context. Role brief: `subagents/cpo/DESIGN.md`.
+  usage improves the product. CPO must apply
+  `subagents/cpo/BRAND_GUIDELINES.md` as product context, not merely copy
+  context. Role brief: `subagents/cpo/DESIGN.md`.
 - CTO: exacting about antifragile architecture. Owns system boundaries,
   persistence, deployment shape, versioning, failure modes, and whether stress
   from change makes the system easier to operate. Role brief:

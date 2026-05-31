@@ -15,7 +15,7 @@ sessions.
 - `scripts/dev/` - local dev wrappers.
 - `scripts/prod/` - production deploy wrapper.
 - `subagents/ceo/SYSTEM_DESIGN.md` - CEO-owned antifragile system design context.
-- `BRAND_GUIDELINES.md` - public voice, naming, and copy rules.
+- `subagents/cpo/BRAND_GUIDELINES.md` - public voice, naming, and copy rules.
 
 ## Install
 

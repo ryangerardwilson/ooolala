@@ -30,7 +30,7 @@ help.
 Default read scope:
 
 - `AGENTS.md`
-- `BRAND_GUIDELINES.md`
+- `subagents/cpo/BRAND_GUIDELINES.md`
 - `subagents/cmo/COPYWRITING_FRAMEWORKS.md`
 - `README.md`
 - `docs/`

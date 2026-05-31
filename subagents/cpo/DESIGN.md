@@ -98,9 +98,10 @@ preserve Ooolala's CLI-first, TUI-second, web-third priority.
 
 ## Brand Guidelines Contract
 
-Use `BRAND_GUIDELINES.md` when judging public product surfaces, product names,
-navigation labels, CTAs, onboarding, landing-page hierarchy, docs entry points,
-and any product/design decision that changes what users believe Ooolala is.
+Use `subagents/cpo/BRAND_GUIDELINES.md` when judging public product surfaces,
+product names, navigation labels, CTAs, onboarding, landing-page hierarchy,
+docs entry points, and any product/design decision that changes what users
+believe Ooolala is.
 
 Brand is part of product shape, not a CMO-only polish pass. The CPO must keep
 the interface aligned with the canonical positioning:
@@ -183,8 +184,8 @@ CFO owns cost constraints. CEO resolves unresolved conflicts.
 - Do copy buttons copy only commands that can be pasted and executed as-is?
 - Does TUI/web preserve identity, DM, room, message, auth, and sync?
 - Is the empty state actionable?
-- Does the surface match `BRAND_GUIDELINES.md` in naming, positioning, and
-  public first-run flow?
+- Does the surface match `subagents/cpo/BRAND_GUIDELINES.md` in naming,
+  positioning, and public first-run flow?
 - Has white space been used to group, separate, and isolate the primary action?
 - Did real friction create a durable command, default, layout, recovery, or
   error improvement?
