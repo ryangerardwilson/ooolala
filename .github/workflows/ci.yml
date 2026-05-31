@@ -1,0 +1,61 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  elixir:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: ooolala_dev
+          POSTGRES_USER: ooolala
+          POSTGRES_PASSWORD: ooolala
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ooolala -d ooolala_dev"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28'
+          elixir-version: '1.19'
+      - run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - run: mix test
+        working-directory: apps/backend
+      - run: OOOLALA_STORE=postgres DATABASE_URL='postgres://ooolala:ooolala@127.0.0.1:5432/ooolala_dev' mix ooolala.db.migrate
+        working-directory: apps/backend
+      - run: OOOLALA_STORE=postgres DATABASE_URL='postgres://ooolala:ooolala@127.0.0.1:5432/ooolala_dev' mix test
+        working-directory: apps/backend
+
+  node:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm test --workspaces --if-present
+      - run: npm run build --workspaces --if-present
+      - run: |
+          mkdir -p artifacts/cli artifacts/tui artifacts/components
+          node apps/frontend/terminal/dist/index.js help > artifacts/cli/help.txt
+          node apps/frontend/terminal/dist/index.js version > artifacts/cli/version.txt
+          npm --workspace apps/frontend/terminal run snapshot > artifacts/tui/snapshot.txt
+          cp apps/frontend/web/src/components/contracts.ts artifacts/components/contracts.ts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: client-evidence
+          path: artifacts
+          retention-days: 7

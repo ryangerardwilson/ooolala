@@ -1,0 +1,26 @@
+{
+  "name": "@ooolala/terminal",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "ooolala": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/index.ts",
+    "snapshot": "tsx src/snapshot.ts",
+    "test": "npm run build && node --test dist/*.test.js",
+    "tui": "tsx src/tui.tsx"
+  },
+  "dependencies": {
+    "ink": "latest",
+    "ink-text-input": "latest",
+    "react": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "tsx": "latest",
+    "typescript": "latest"
+  }
+}

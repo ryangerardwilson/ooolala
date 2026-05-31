@@ -1,0 +1,33 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Elixir
+_build/
+deps/
+erl_crash.dump
+*.ez
+
+# Node
+node_modules/
+.next/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Pulumi
+Pulumi.*.yaml
+!.gitignore
+.deploy/
+
+# VM secrets stay outside the repo. Use OOOLALA_VM_SSH_KEY to point at ~/.ssh.
+infra/vm/secrets/*
+!infra/vm/secrets/README.md
+
+# Local app state
+.ooolala/
+.evidence/
+.dev/
+.backups/

@@ -1,0 +1,20 @@
+{
+  "name": "@ooolala/infra-vm",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "preview": "pulumi preview",
+    "up": "pulumi up",
+    "destroy": "pulumi destroy",
+    "test": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@pulumi/cloudflare": "^6.17.0",
+    "@pulumi/command": "latest",
+    "@pulumi/pulumi": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "typescript": "latest"
+  }
+}
