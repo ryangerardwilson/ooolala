@@ -55,59 +55,49 @@ const configOrder = ['handle', 'username', 'password'];
 
 const helpTemplate = `Ooolala
 
-commands:
-  inspect or change the installed client
-  # help
+features:
+  inspect the installed client and upgrade through the installer
+  # help | version | upgrade
   ooolala help
-  # version
   ooolala version
-  # upgrade
   ooolala upgrade
 
-  create or save backend credentials with hidden password prompts
-  auth creates the account when the handle is free, or signs in when it exists
-  # auth [username]
+  create or save backend credentials, then inspect or clear local auth
+  auth creates the account when the handle is free, or signs in when it already exists
+  # auth [username] | who | signout | password
   ooolala auth yourname
   ooolala auth
-  # signout
-  ooolala signout
-  # password
-  ooolala password
-  # who
   ooolala who
+  ooolala password
+  ooolala signout
 
-  send and read direct messages through the backend
-  # send <username> <message>
+  send direct messages through the backend, including files or stdin
+  # send <username> <message> [attach <path> [path ...]] | send <username> -
   ooolala send bob "hello from the terminal"
-  # send <username> <message> attach <path> [path ...]
   ooolala send bob "logs attached" attach ./run.log ./screenshots
-  # send <username> -
   echo "hello from stdin" | ooolala send bob -
-  # download <message-id> <attachment-id> [dir]
-  ooolala download 20260531123000-AbCdEf note1 .
-  # open <username>
-  ooolala open bob
-  # close <username>
-  ooolala close bob
-  # read <username> [last <count>]
+
+  read, watch, open, and close direct-message chats
+  # read <username> [last <count>|unread [incoming] [json]] | watch <username> [incoming] | open <username> | close <username>
   ooolala read bob
   ooolala read bob last 10
-  # read <username> unread [incoming] [json]
   ooolala read bob unread
   ooolala read bob unread incoming
-  # watch <username> [incoming]
   ooolala watch bob incoming
+  ooolala open bob
+  ooolala close bob
+
+  download an attachment from a printed message/attachment pair
+  # download <message-id> <attachment-id> [dir]
+  ooolala download 20260531123000-AbCdEf note1 .
 
   launch the terminal UI
   # tui
   ooolala tui
 
-  open the user-editable config
-  # config
+  open local config or print agent usage instructions
+  # config | skills
   ooolala config
-
-  print agent usage instructions
-  # skills
   ooolala skills
 `;
 
@@ -138,7 +128,7 @@ async function dispatch(argv: string[], stdin?: string): Promise<string> {
     return signoutCommand(argv.slice(1));
   }
 
-  if (argv[0] === 'password' || argv[0] === 'pw') {
+  if (argv[0] === 'password') {
     return passwordCommand(argv.slice(1), stdin);
   }
 
@@ -680,7 +670,7 @@ function localVersionLines() {
     `product_version ${version()}`,
     `commit ${process.env.OOOLALA_COMMIT || process.env.GITHUB_SHA || 'local'}`,
     `environment ${process.env.OOOLALA_ENV || process.env.NODE_ENV || 'client'}`,
-    'cli_contract 8',
+    'command_surface 8',
     'chat_protocol 1..3',
     'auth_policy 7',
     'ui_flow 12'
@@ -811,7 +801,7 @@ function parseCanonicalUnreadOptions(opts: string[]) {
 
   for (const opt of opts) {
     if (opt === 'incoming') parsed.direction = 'incoming';
-    else if (opt === 'json' || opt === '-json') parsed.format = 'json';
+    else if (opt === 'json') parsed.format = 'json';
     else throw new CommandError(`try: ${commandName()} read bob unread incoming\n`);
   }
 
@@ -901,7 +891,7 @@ function upgrade() {
     return runCaptured('sh', ['-c', 'curl -fsSL "$1" | bash', 'ooolala-upgrade', installerUrl]);
   }
 
-  if (existsSync(installer)) return runCaptured(installer, ['-u']);
+  if (existsSync(installer)) return runCaptured(installer, ['upgrade']);
   throw new CommandError('installer not found; set OOOLALA_INSTALL_URL or OOOLALA_INSTALL\n');
 }
 

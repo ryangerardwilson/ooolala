@@ -7,7 +7,8 @@ CHECK_ONLY=false
 
 usage() {
   cat <<'EOF'
-usage: scripts/infra/bootstrap-vm.sh prod [--check]
+usage: scripts/infra/bootstrap-vm.sh help
+usage: scripts/infra/bootstrap-vm.sh prod [check]
 
 Prepare an Ubuntu/Debian VM for Ooolala deployment:
   - Docker Engine and Docker Compose plugin
@@ -20,15 +21,20 @@ The target host/user/key/domain come from infra/vm/environments/*.sh.
 EOF
 }
 
-if [[ -z "$TARGET" || "$TARGET" == "-h" || "$TARGET" == "--help" ]]; then
+if [[ "$TARGET" == "help" ]]; then
   usage
-  [[ -z "$TARGET" ]] && exit 2 || exit 0
+  exit 0
+fi
+
+if [[ -z "$TARGET" ]]; then
+  usage
+  exit 2
 fi
 shift
 
 while (($#)); do
   case "$1" in
-    --check)
+    check)
       CHECK_ONLY=true
       ;;
     -*)

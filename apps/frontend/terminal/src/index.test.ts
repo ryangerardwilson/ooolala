@@ -1,16 +1,19 @@
 import {createServer} from 'node:http';
-import {mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
+import {chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {run} from './index.js';
 
+const productVersion = readFileSync(new URL('../../../../VERSION', import.meta.url), 'utf8').trim();
+
 test('help prints canonical command grammar', async () => {
   const help = await run(['help']);
 
   assert.equal(help.status, 0);
-  assert.match(help.stdout, /commands:/);
+  assert.match(help.stdout, /features:/);
+  assert.doesNotMatch(help.stdout, /commands:/);
   assert.match(help.stdout, /ooolala send bob/);
   assert.match(help.stdout, /ooolala send bob "logs attached" attach/);
   assert.match(help.stdout, /# download <message-id> <attachment-id>/);
@@ -37,11 +40,66 @@ test('no args bootstraps auth on first run', async () => {
 });
 
 test('removed aliases are unsupported', async () => {
-  for (const argv of [['-h'], ['-v'], ['-u'], ['signup', 'user3'], ['dm', 'bob', 'hello'], ['web'], ['conf'], ['remove', 'bob'], ['forget', 'bob']]) {
+  for (const argv of [['help'], ['version'], ['upgrade'], ['signup', 'user3'], ['dm', 'bob', 'hello'], ['web'], ['conf'], ['pw'], ['remove', 'bob'], ['forget', 'bob']]) {
     const result = await run(argv);
 
     assert.equal(result.status, 1);
     assert.equal(result.stderr, 'unknown command; try: ooolala help\n');
+  }
+});
+
+test('json unread output uses word syntax only', async () => {
+  const dashed = await run(['read', 'bob', 'unread', '-json']);
+
+  assert.equal(dashed.status, 1);
+  assert.equal(dashed.stderr, 'try: ooolala read bob unread incoming\n');
+});
+
+test('version reports local vector without requiring backend availability', async () => {
+  await withServer(async (url) => {
+    const oldApi = process.env.OOOLALA_API;
+
+    try {
+      process.env.OOOLALA_API = url;
+
+      const result = await run(['version']);
+
+      assert.equal(result.status, 0);
+      assert.match(result.stdout, new RegExp(`product_version ${productVersion}`));
+      assert.match(result.stdout, /backend http:\/\/127\.0\.0\.1:\d+\nbackend_status unavailable: not found\n/);
+    } finally {
+      if (oldApi === undefined) delete process.env.OOOLALA_API;
+      else process.env.OOOLALA_API = oldApi;
+    }
+  });
+});
+
+test('upgrade delegates to installer upgrade mode', async () => {
+  const oldInstall = process.env.OOOLALA_INSTALL;
+  const oldInstallUrl = process.env.OOOLALA_INSTALL_URL;
+  const temp = mkdtempSync(join(tmpdir(), 'ooolala-upgrade-test-'));
+  const installer = join(temp, 'install.sh');
+  const log = join(temp, 'args.txt');
+
+  try {
+    writeFileSync(installer, `#!/usr/bin/env bash\nprintf '%s\\n' "$*" > "${log}"\nprintf 'upgraded\\n'\n`);
+    chmodSync(installer, 0o755);
+    process.env.OOOLALA_INSTALL = installer;
+    delete process.env.OOOLALA_INSTALL_URL;
+
+    const result = await run(['upgrade']);
+
+    assert.equal(result.status, 0);
+    assert.equal(result.stdout, 'upgraded\n');
+    assert.equal(readFileSync(log, 'utf8'), '-u\n');
+  } finally {
+    if (oldInstall === undefined) delete process.env.OOOLALA_INSTALL;
+    else process.env.OOOLALA_INSTALL = oldInstall;
+
+    if (oldInstallUrl === undefined) delete process.env.OOOLALA_INSTALL_URL;
+    else process.env.OOOLALA_INSTALL_URL = oldInstallUrl;
+
+    rmSync(temp, {recursive: true, force: true});
   }
 });
 

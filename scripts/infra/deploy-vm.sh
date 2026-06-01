@@ -19,7 +19,7 @@ EOF
 
 while (($#)); do
   case "$1" in
-    -h|--help)
+    help)
       usage
       exit 0
       ;;

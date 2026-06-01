@@ -114,7 +114,7 @@ Core algorithm:
 The product version stays human-facing and comes from `VERSION`. Runtime
 compatibility uses monotonic contract numbers:
 
-- `cli_contract`: command grammar, output shape, and local state rules.
+- `command_surface`: command grammar, output shape, and local state rules.
 - `chat_protocol`: backend/client message exchange shape.
 - `db_schema`: durable Postgres schema migrations.
 - `auth_policy`: login/session/security assumptions.
@@ -168,7 +168,8 @@ The CLI should stay compact and backend-backed:
 - Terminal/web client behavior belongs in Node/TypeScript. Backend concurrency,
   persistence, and realtime fanout belong in Elixir.
 
-Keep command output compact and scriptable. Prefer short flags and stable verbs.
+Keep command output compact and scriptable. Prefer declarative English verbs and
+clear modifiers over compressed flags.
 
 Promotion should flow through local/dev, then prod. Local dev is the
 stabilization lane; production deploys only after local CLI, TUI, web, and

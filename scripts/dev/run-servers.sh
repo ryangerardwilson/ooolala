@@ -38,6 +38,7 @@ usage() {
 Run the local Ooolala dev stack.
 
 usage:
+  scripts/dev/run-servers.sh help
   scripts/dev/run-servers.sh
 
 env:
@@ -58,9 +59,15 @@ then use:
 TXT
 }
 
-if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+if [[ "${1:-}" == "help" ]]; then
   usage
   exit 0
+fi
+
+if [[ $# -gt 0 ]]; then
+  printf 'unexpected argument: %s\n' "$1" >&2
+  usage >&2
+  exit 2
 fi
 
 mkdir -p "$DEV_DIR"

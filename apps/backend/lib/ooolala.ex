@@ -31,7 +31,7 @@ defmodule Ooolala do
       product_version: Version.product_version(),
       commit: Version.commit(),
       environment: Version.environment(),
-      cli_contract: Version.cli_contract(),
+      command_surface: Version.command_surface(),
       chat_protocol: %{
         min: Version.chat_protocol_min(),
         max: Version.chat_protocol_max()
@@ -53,7 +53,7 @@ defmodule Ooolala do
       "product_version #{vector.product_version}",
       "commit #{vector.commit}",
       "environment #{vector.environment}",
-      "cli_contract #{vector.cli_contract}",
+      "command_surface #{vector.command_surface}",
       "chat_protocol #{vector.chat_protocol.min}..#{vector.chat_protocol.max}",
       "db_schema #{vector.db_schema.current}/#{vector.db_schema.latest} #{vector.db_schema.store}",
       "auth_policy #{vector.auth_policy}",

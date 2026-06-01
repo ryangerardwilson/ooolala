@@ -1,8 +1,8 @@
 defmodule Ooolala.Version do
-  @moduledoc "Shared product and compatibility contract versions."
+  @moduledoc "Shared product and compatibility versions."
 
   @product_version Mix.Project.config()[:version]
-  @cli_contract 8
+  @command_surface 8
   @chat_protocol_min 1
   @chat_protocol_max 3
   @db_schema 7
@@ -11,7 +11,7 @@ defmodule Ooolala.Version do
   @compile_env Mix.env() |> to_string()
 
   def product_version, do: @product_version
-  def cli_contract, do: @cli_contract
+  def command_surface, do: @command_surface
   def chat_protocol_min, do: @chat_protocol_min
   def chat_protocol_max, do: @chat_protocol_max
   def db_schema, do: @db_schema
@@ -35,7 +35,7 @@ defmodule Ooolala.Version do
       "product_version #{product_version()}",
       "commit #{commit()}",
       "environment #{environment()}",
-      "cli_contract #{cli_contract()}",
+      "command_surface #{command_surface()}",
       "chat_protocol #{chat_protocol_min()}..#{chat_protocol_max()}",
       "auth_policy #{auth_policy()}",
       "ui_flow #{ui_flow()}"

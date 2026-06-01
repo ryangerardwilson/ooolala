@@ -8,6 +8,7 @@ source "$ROOT/scripts/prod/vm-common.sh"
 
 usage() {
   cat <<'EOF'
+usage: scripts/prod/restore-postgres.sh help
 usage: scripts/prod/restore-postgres.sh <backup.dump.gz>
 
 Restore the production Postgres volume from a gzip-compressed pg_dump custom
@@ -15,9 +16,9 @@ archive. The script creates a fresh production backup before restoring.
 EOF
 }
 
-if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || $# -ne 1 ]]; then
+if [[ "${1:-}" == "help" || $# -ne 1 ]]; then
   usage
-  if [[ $# -eq 1 ]]; then
+  if [[ "${1:-}" == "help" ]]; then
     exit 0
   fi
   exit 2

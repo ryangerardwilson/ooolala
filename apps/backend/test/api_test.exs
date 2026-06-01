@@ -74,7 +74,7 @@ defmodule OoolalaTest do
     vector = Ooolala.version_vector()
 
     assert vector.product_version =~ ~r/^\d+\.\d+\.\d+$/
-    assert vector.cli_contract == 8
+    assert vector.command_surface == 8
     assert vector.chat_protocol == %{min: 1, max: 3}
     assert vector.db_schema.latest == 7
     assert vector.db_schema.store in ["memory", "postgres"]

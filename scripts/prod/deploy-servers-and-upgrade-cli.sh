@@ -8,6 +8,7 @@ source "$ROOT/infra/vm/environments/prod.sh"
 
 usage() {
   cat <<'EOF'
+usage: scripts/prod/deploy-servers-and-upgrade-cli.sh help
 usage: scripts/prod/deploy-servers-and-upgrade-cli.sh
 
 Run local verification, ask for confirmation, deploy production through the VM
@@ -72,19 +73,16 @@ confirm_deploy() {
   fi
 }
 
-for arg in "$@"; do
-  case "$arg" in
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    *)
-      printf 'unexpected argument: %s\n' "$arg" >&2
-      usage >&2
-      exit 2
-      ;;
-  esac
-done
+if [[ "${1:-}" == "help" ]]; then
+  usage
+  exit 0
+fi
+
+if [[ $# -gt 0 ]]; then
+  printf 'unexpected argument: %s\n' "$1" >&2
+  usage >&2
+  exit 2
+fi
 
 if ! command -v curl >/dev/null 2>&1; then
   cat >&2 <<'EOF'

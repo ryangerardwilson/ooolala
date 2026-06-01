@@ -17,14 +17,14 @@ usage() {
   cat <<'TXT'
 Ooolala installer
 
-flags:
-  ./install.sh -h
+global actions:
+  ./install.sh help
     show this help
-  ./install.sh -v
+  ./install.sh version
     print the source version
-  ./install.sh -v <version>
+  ./install.sh version <version>
     install only if the source version matches <version>
-  ./install.sh -u
+  ./install.sh upgrade
     rebuild and reinstall from the managed source checkout
 TXT
 }
@@ -185,10 +185,10 @@ if [[ $# -eq 0 ]]; then
 fi
 
 case "${1:-}" in
-  -h|--help)
+  help)
     usage
     ;;
-  -v|--version)
+  version)
     if [[ $# -eq 1 ]]; then
       version
       exit 0
@@ -201,16 +201,16 @@ case "${1:-}" in
     fi
     install_current
     ;;
-  -u|--upgrade)
+  upgrade)
     if [[ $# -ne 1 ]]; then
-      printf 'invalid installer shape: use ./install.sh -u\n' >&2
+      printf 'invalid installer shape: use ./install.sh upgrade\n' >&2
       exit 1
     fi
     install_current
     ;;
   *)
-    printf 'unknown installer flag: %s\n' "$1" >&2
-    printf 'use ./install.sh -h\n' >&2
+    printf 'unknown installer command: %s\n' "$1" >&2
+    printf 'use ./install.sh help\n' >&2
     exit 1
     ;;
 esac

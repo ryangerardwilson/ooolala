@@ -32,6 +32,7 @@ usage() {
 Run the Ooolala CLI against the local dev backend.
 
 usage:
+  scripts/dev/run-cli.sh help
   scripts/dev/run-cli.sh auth <username>
   scripts/dev/run-cli.sh send <peer> "hello"
   scripts/dev/run-cli.sh tui
@@ -43,7 +44,7 @@ notes:
 TXT
 }
 
-if [[ "${1:-}" == "--help" ]]; then
+if [[ "${1:-}" == "help" ]]; then
   usage
   exit 0
 fi

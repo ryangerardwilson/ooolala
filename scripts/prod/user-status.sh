@@ -6,9 +6,9 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # shellcheck source=./vm-common.sh
 source "$ROOT/scripts/prod/vm-common.sh"
 
-if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || $# -ne 1 ]]; then
+if [[ "${1:-}" == "help" || $# -ne 1 ]]; then
   printf 'usage: scripts/prod/user-status.sh <username>\n'
-  exit 0
+  [[ "${1:-}" == "help" ]] && exit 0 || exit 2
 fi
 
 username="$1"

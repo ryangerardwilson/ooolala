@@ -558,7 +558,7 @@ defmodule Ooolala.HttpServer do
 
   defp version_json(vector) do
     """
-    {"product_version":#{json_string(vector.product_version)},"commit":#{json_string(vector.commit)},"environment":#{json_string(vector.environment)},"cli_contract":#{vector.cli_contract},"chat_protocol":{"min":#{vector.chat_protocol.min},"max":#{vector.chat_protocol.max}},"db_schema":{"current":#{vector.db_schema.current},"latest":#{vector.db_schema.latest},"store":#{json_string(vector.db_schema.store)}},"auth_policy":#{vector.auth_policy},"ui_flow":#{vector.ui_flow}}
+    {"product_version":#{json_string(vector.product_version)},"commit":#{json_string(vector.commit)},"environment":#{json_string(vector.environment)},"command_surface":#{vector.command_surface},"chat_protocol":{"min":#{vector.chat_protocol.min},"max":#{vector.chat_protocol.max}},"db_schema":{"current":#{vector.db_schema.current},"latest":#{vector.db_schema.latest},"store":#{json_string(vector.db_schema.store)}},"auth_policy":#{vector.auth_policy},"ui_flow":#{vector.ui_flow}}
     """
     |> String.trim()
   end

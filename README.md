@@ -54,12 +54,14 @@ ooolala watch bob incoming
 ooolala open bob
 ooolala close bob
 ooolala tui
+ooolala config
 ooolala skills
 ```
 
 `ooolala signout` clears saved local credentials without changing the backend
 account. `ooolala tui` launches the Ink TUI using saved CLI auth.
 Bob is the public welcome account for first DMs.
+`ooolala config` opens the user-editable local config.
 `ooolala skills` prints the agent-facing instructions from `SKILLS.md`.
 
 Attachments are part of the backend message log. Files are uploaded through
@@ -180,7 +182,7 @@ installer upgrade path.
 
 Compatibility fields:
 
-- `cli_contract`
+- `command_surface`
 - `chat_protocol`
 - `db_schema`
 - `auth_policy`
