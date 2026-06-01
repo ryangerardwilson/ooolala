@@ -14,8 +14,9 @@ sessions.
 - `infra/vm/` - current Pulumi VM deployment.
 - `scripts/dev/` - local dev wrappers.
 - `scripts/prod/` - production deploy wrapper.
-- `subagents/ceo/SYSTEM_DESIGN.md` - CEO-owned antifragile system design context.
-- `subagents/cpo/BRAND_GUIDELINES.md` - public voice, naming, and copy rules.
+- `context/INDEX.md` - project context routing for agents.
+- `context/product/SYSTEM_DESIGN.md` - Ooolala antifragile system design context.
+- `context/brand/BRAND.md` - Ooolala public voice, naming, and copy rules.
 
 ## Install
 

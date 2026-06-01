@@ -7,7 +7,7 @@ auth, and cost stress.
 
 ## Antifragile Architecture Lens
 
-Use `subagents/ceo/SYSTEM_DESIGN.md`:
+Use `context/product/SYSTEM_DESIGN.md`:
 
 - system: Ooolala chat system
 - core algorithm: user identity + room + message + local state + backend state

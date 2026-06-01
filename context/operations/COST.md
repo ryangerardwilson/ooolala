@@ -9,7 +9,7 @@ to iterate quickly without forcing premature platform decisions.
 
 ## Antifragile Cost Lens
 
-Use `subagents/ceo/SYSTEM_DESIGN.md`:
+Use `context/product/SYSTEM_DESIGN.md`:
 
 - system: Ooolala operating model
 - core algorithm: user demand + deploy needs + data needs -> infrastructure

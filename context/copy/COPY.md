@@ -12,7 +12,7 @@ terminal workflows.
 
 ## Antifragile Copy Lens
 
-Use `subagents/ceo/SYSTEM_DESIGN.md`:
+Use `context/product/SYSTEM_DESIGN.md`:
 
 - system: Ooolala written interface
 - core algorithm: user context -> words shown in CLI/TUI/web/docs/errors ->
@@ -30,8 +30,8 @@ help.
 Default read scope:
 
 - `AGENTS.md`
-- `subagents/cpo/BRAND_GUIDELINES.md`
-- `subagents/cmo/COPYWRITING_FRAMEWORKS.md`
+- `context/brand/BRAND.md`
+- `context/copy/COPYWRITING_FRAMEWORKS.md`
 - `README.md`
 - `docs/`
 - `apps/frontend/terminal/src/index.ts`
@@ -47,7 +47,7 @@ Default write scope, only when assigned by the lead:
 
 ## Copy Principles
 
-- Use `subagents/cmo/COPYWRITING_FRAMEWORKS.md` before writing or reviewing
+- Use `context/copy/COPYWRITING_FRAMEWORKS.md` before writing or reviewing
   landing-page copy, onboarding copy, docs, launch notes, social copy, emails,
   ads, value propositions, CTAs, headlines, testimonials, or longer persuasive
   pages.

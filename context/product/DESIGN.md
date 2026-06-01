@@ -11,7 +11,7 @@ the same identity, DM, room, message, auth, and sync model.
 
 ## Antifragile Design System Frame
 
-Use `subagents/ceo/SYSTEM_DESIGN.md`:
+Use `context/product/SYSTEM_DESIGN.md`:
 
 - system: Ooolala product and design system
 - core algorithm: terminal-work chat friction -> product/design decision ->
@@ -88,7 +88,7 @@ signup. Account creation belongs to `ooolala auth`.
 
 ## Microcopy Contract
 
-Use `subagents/cpo/MICROCOPY.md` when judging labels, buttons, field hints,
+Use `context/product/MICROCOPY.md` when judging labels, buttons, field hints,
 empty states, loading states, success messages, error messages, tooltips,
 notifications, alt text, captions, onboarding, or offboarding copy.
 
@@ -98,7 +98,7 @@ preserve Ooolala's CLI-first, TUI-second, web-third priority.
 
 ## Brand Guidelines Contract
 
-Use `subagents/cpo/BRAND_GUIDELINES.md` when judging public product surfaces,
+Use `context/brand/BRAND.md` when judging public product surfaces,
 product names, navigation labels, CTAs, onboarding, landing-page hierarchy,
 docs entry points, and any product/design decision that changes what users
 believe Ooolala is.
@@ -122,7 +122,7 @@ must block designs whose structure forces weak, bloated, or misleading copy.
 
 ## White-Space Contract
 
-Use `subagents/cpo/WHITE_SPACE.md` when judging spacing, density, grouping,
+Use `context/product/WHITE_SPACE.md` when judging spacing, density, grouping,
 visual hierarchy, viewport fit, and whether empty areas create focus or dead
 space.
 
@@ -184,7 +184,7 @@ CFO owns cost constraints. CEO resolves unresolved conflicts.
 - Do copy buttons copy only commands that can be pasted and executed as-is?
 - Does TUI/web preserve identity, DM, room, message, auth, and sync?
 - Is the empty state actionable?
-- Does the surface match `subagents/cpo/BRAND_GUIDELINES.md` in naming,
+- Does the surface match `context/brand/BRAND.md` in naming,
   positioning, and public first-run flow?
 - Has white space been used to group, separate, and isolate the primary action?
 - Did real friction create a durable command, default, layout, recovery, or
