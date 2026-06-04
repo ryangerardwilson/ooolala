@@ -10,7 +10,8 @@ sessions.
 - `apps/backend/lib/` - backend support modules.
 - `apps/frontend/terminal/` - Node.js terminal client: CLI plus Ink TUI mode.
 - `apps/frontend/web/` - React/Vite/Tailwind web app.
-- `apps/frontend/web/src/components/` - web component API: layout, colors, fonts, and widgets.
+- `apps/frontend/web/src/components/` - web component API: layout, colors,
+  fonts, L1 primitives, L2 patterns, and L3 product surfaces.
 - `infra/vm/` - current Pulumi VM deployment.
 - `scripts/dev/` - local dev wrappers.
 - `scripts/prod/` - production deploy wrapper.

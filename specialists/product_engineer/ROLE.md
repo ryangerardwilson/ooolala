@@ -68,6 +68,21 @@ Copyable command UI must copy only paste-ready commands. Do not copy
 placeholders such as `<username>`. If a command needs user input, use the
 prompting form, such as `ooolala auth`.
 
+## Marketing Objective
+
+Ooolala is also a public proof object for Ryan's ability to design and operate
+complex systems. The project should market the complexity, judgment, and
+integration quality Ryan can bring to software systems, while remaining honest
+that Ooolala is still in a nascent stage.
+
+The GitHub repository is intentionally public for this reason. Public copy may
+use the repo's visibility as evidence that the architecture, product thinking,
+and implementation can be inspected directly.
+
+Do not overstate maturity, adoption, scale, or polish. The stronger marketing
+claim is that the project exposes real system-design depth in public, not that
+the product is already fully mature.
+
 ## Brand And Product Voice
 
 Core line:
@@ -245,11 +260,17 @@ Web component API:
   placement.
 - `colors` owns semantic color roles, named schemes, and CSS variable values.
 - `fonts` owns body and mono font stacks plus font CSS variables.
-- `widgets` owns buttons, inputs, message bubbles, product panels, and chat UI
-  atoms.
+- `primitives` owns L1 basic UI atoms such as buttons, inputs, textareas,
+  icons, and status text.
+- `patterns` owns L2 reusable UX patterns such as form fields, command rows,
+  empty states, dialog forms, and message bubbles.
+- `product` owns L3 Ooolala product surfaces such as landing, docs, auth, and
+  chat panels.
 
 Components must not own auth, polling, API calls, storage, deployment URLs, or
-backend behavior. Component names should stay platform-neutral where possible.
+backend behavior. L3 product components may represent Ooolala concepts, but
+must receive state and actions from the app orchestrator instead of fetching or
+persisting directly.
 
 ## Development
 

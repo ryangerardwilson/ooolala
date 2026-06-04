@@ -40,7 +40,7 @@ test('no args bootstraps auth on first run', async () => {
 });
 
 test('removed aliases are unsupported', async () => {
-  for (const argv of [['help'], ['version'], ['upgrade'], ['signup', 'user3'], ['dm', 'bob', 'hello'], ['web'], ['conf'], ['pw'], ['remove', 'bob'], ['forget', 'bob']]) {
+  for (const argv of [['-h'], ['-v'], ['-u'], ['signup', 'user3'], ['dm', 'bob', 'hello'], ['web'], ['conf'], ['pw'], ['remove', 'bob'], ['forget', 'bob']]) {
     const result = await run(argv);
 
     assert.equal(result.status, 1);
@@ -91,7 +91,7 @@ test('upgrade delegates to installer upgrade mode', async () => {
 
     assert.equal(result.status, 0);
     assert.equal(result.stdout, 'upgraded\n');
-    assert.equal(readFileSync(log, 'utf8'), '-u\n');
+    assert.equal(readFileSync(log, 'utf8'), 'upgrade\n');
   } finally {
     if (oldInstall === undefined) delete process.env.OOOLALA_INSTALL;
     else process.env.OOOLALA_INSTALL = oldInstall;

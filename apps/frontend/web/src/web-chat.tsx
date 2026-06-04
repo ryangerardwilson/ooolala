@@ -1,15 +1,9 @@
 import {useEffect, useRef, useState, type FormEvent} from 'react';
-import {ArrowLeft, KeyRound, LogIn, LogOut, Plus, RefreshCw, SendHorizontal, Terminal} from 'lucide-react';
-import {widgets} from './components';
+import {LogIn} from 'lucide-react';
+import {patterns, primitives, product} from './components';
+import type {ChatAttachment, ChatMessage} from './components/product';
 
-type Message = {
-  id: string;
-  room: string;
-  author: string;
-  body: string;
-  insertedAt: Date;
-  attachments: Attachment[];
-};
+type Message = ChatMessage;
 
 type BackendMessage = {
   id: string;
@@ -28,13 +22,7 @@ type BackendAttachment = {
   url?: string;
 };
 
-type Attachment = {
-  id: string;
-  filename: string;
-  contentType: string;
-  byteSize: number;
-  url?: string;
-};
+type Attachment = ChatAttachment;
 
 type Session = {
   username: string;
@@ -557,7 +545,7 @@ function ChatApp({apiUrl}: WebChatProps) {
   }
 
   if (!session && isAutoLoggingIn) {
-    return <widgets.OpeningPanel status={status} />;
+    return <product.OpeningPanel status={status} />;
   }
 
   if (!session) {
@@ -570,205 +558,64 @@ function ChatApp({apiUrl}: WebChatProps) {
   }
 
   return (
-    <main className="h-[100svh] overflow-hidden bg-[var(--oo-bg)] text-[var(--oo-fg)]">
-      <div className="mx-auto flex h-full w-full max-w-[980px] flex-col overflow-hidden px-4 py-3 sm:py-4">
-        <header className="mb-3 flex shrink-0 items-center justify-between">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <Terminal size={18} color="var(--oo-accent)" />
-              <h1 className="text-base font-semibold">ooolala</h1>
-            </div>
-            <div className="mt-1 truncate text-xs text-[var(--oo-muted)]">
-              {step === 'chat' ? activeApiUrl : `${session.username} · ${activeApiUrl}`}
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              className="grid h-9 w-9 place-items-center border border-[var(--oo-line)] bg-[var(--oo-panel)] text-[var(--oo-fg)] hover:border-[var(--oo-accent)]"
-              onClick={openPasswordModal}
-              type="button"
-              aria-label="change password"
-            >
-              <KeyRound size={15} />
-            </button>
-            <button
-              className="grid h-9 w-9 place-items-center border border-[var(--oo-line)] bg-[var(--oo-panel)] text-[var(--oo-fg)] hover:border-[var(--oo-accent)]"
-              onClick={logout}
-              type="button"
-              aria-label="logout"
-            >
-              <LogOut size={15} />
-            </button>
-          </div>
-        </header>
+    <product.ChatAppShell
+      detail={step === 'chat' ? activeApiUrl : `${session.username} · ${activeApiUrl}`}
+      onLogout={logout}
+      onOpenPassword={openPasswordModal}
+      status={status}
+    >
+      {step === 'chats' && (
+        <product.ChatListPanel
+          knownPeers={knownPeers}
+          onOpenPeer={(peer) => void openKnownDm(peer)}
+          onSelectPeer={setSelectedChatIndex}
+          onStartNewChat={startNewChat}
+          selectedChatIndex={selectedChatIndex}
+          selectedChatRef={selectedChatRef}
+        />
+      )}
 
-        {status && <div className="mb-4 border border-[var(--oo-line)] p-3 text-sm text-[var(--oo-warning)]">{status}</div>}
+      {step === 'newPeer' && (
+        <product.NewChatPanel
+          onBack={() => {
+            setStatus('');
+            setStep('chats');
+          }}
+          onPeerChange={(event) => setPeerDraft(event.target.value)}
+          onSubmit={openNewDm}
+          peerDraft={peerDraft}
+          peerInputRef={peerInputRef}
+        />
+      )}
 
-        {step === 'chats' && (
-          <section className="mx-auto flex min-h-0 w-full max-w-[600px] flex-1 flex-col overflow-hidden border border-[var(--oo-line)] bg-[var(--oo-panel)]">
-            <div className="flex h-12 shrink-0 items-center justify-between border-b border-[var(--oo-line)] px-4">
-              <h2 className="text-sm font-semibold text-[var(--oo-muted)]">chats</h2>
-              {knownPeers.length > 0 && (
-                <button
-                  className="grid h-8 w-8 place-items-center border border-[var(--oo-line)] bg-[var(--oo-panel-strong)] text-[var(--oo-fg)] hover:border-[var(--oo-accent)]"
-                  onClick={startNewChat}
-                  type="button"
-                  aria-label="new chat"
-                >
-                  <Plus size={16} />
-                </button>
-              )}
-            </div>
+      {step === 'chat' && (
+        <product.ConversationPanel
+          activePeer={activePeer}
+          currentUsername={session.username}
+          dateLabelFor={dateLabel}
+          draft={draft}
+          messageInputRef={messageInputRef}
+          messages={messages}
+          onBack={() => {
+            setStatus('');
+            setStep('chats');
+          }}
+          onDownloadAttachment={(message, attachment) => void downloadMessageAttachment(message, attachment)}
+          onDraftChange={(event) => setDraft(event.target.value)}
+          onMessageKeyDown={(event) => {
+            const isEnter = event.key === 'Enter';
+            const isCtrlM = event.ctrlKey && event.key.toLowerCase() === 'm';
 
-            {knownPeers.length === 0 ? (
-              <div className="grid min-h-0 flex-1 place-items-center px-4 text-center">
-                <div>
-                  <p className="text-sm leading-6 text-[var(--oo-muted)]">no chats yet</p>
-                  <button
-                    className="mt-3 inline-flex h-9 items-center justify-center gap-2 border border-[var(--oo-line)] bg-[var(--oo-panel)] px-3 text-sm text-[var(--oo-fg)] hover:border-[var(--oo-accent)]"
-                    onClick={startNewChat}
-                    type="button"
-                  >
-                    <Plus size={15} />
-                    new chat
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="min-h-0 flex-1 overflow-auto">
-                {knownPeers.map((peer, index) => {
-                  const isSelected = index === selectedChatIndex;
-
-                  return (
-                    <button
-                      ref={isSelected ? selectedChatRef : undefined}
-                      className={[
-                        'flex h-12 w-full items-center justify-between border-b border-[var(--oo-line)] px-4 text-left text-sm last:border-b-0',
-                        isSelected ? 'bg-[var(--oo-panel-strong)] text-[var(--oo-fg)]' : 'text-[var(--oo-muted)] hover:bg-[var(--oo-panel-strong)] hover:text-[var(--oo-fg)]'
-                      ].join(' ')}
-                      key={peer}
-                      onClick={() => openKnownDm(peer)}
-                      onFocus={() => setSelectedChatIndex(index)}
-                      onMouseEnter={() => setSelectedChatIndex(index)}
-                      type="button"
-                      aria-current={isSelected ? 'true' : undefined}
-                    >
-                      <span>@{peer}</span>
-                      <span className={isSelected ? 'font-mono text-[var(--oo-accent)]' : 'font-mono text-[var(--oo-muted)]'}>&gt;</span>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </section>
-        )}
-
-        {step === 'newPeer' && (
-          <section className="mx-auto flex min-h-0 w-full max-w-[560px] flex-1 flex-col">
-            <div className="mb-3 flex shrink-0 items-center gap-2">
-              <button
-                className="grid h-9 w-9 place-items-center border border-[var(--oo-line)] bg-[var(--oo-panel)] text-[var(--oo-fg)] hover:border-[var(--oo-accent)]"
-                onClick={() => {
-                  setStatus('');
-                  setStep('chats');
-                }}
-                type="button"
-                aria-label="back to chats"
-              >
-                <ArrowLeft size={16} />
-              </button>
-              <h2 className="text-sm font-semibold text-[var(--oo-muted)]">new chat</h2>
-            </div>
-
-            <form className="flex items-end gap-2" onSubmit={openNewDm}>
-              <label className="min-w-0 flex-1 text-sm">
-                <span className="mb-1 block text-xs text-[var(--oo-muted)]">user</span>
-                <input
-                  ref={peerInputRef}
-                  className="h-10 w-full border border-[var(--oo-line)] bg-[var(--oo-panel-strong)] px-3 text-sm text-[var(--oo-fg)] outline-none focus:border-[var(--oo-accent)]"
-                  value={peerDraft}
-                  onChange={(event) => setPeerDraft(event.target.value)}
-                  placeholder="bob"
-                />
-              </label>
-              <button
-                className="grid h-10 w-10 shrink-0 place-items-center border border-[var(--oo-line)] bg-[var(--oo-panel)] text-[var(--oo-fg)] disabled:opacity-40 enabled:hover:border-[var(--oo-accent)]"
-                disabled={peerDraft.trim().length === 0}
-                type="submit"
-                aria-label="start chat"
-              >
-                <SendHorizontal size={16} />
-              </button>
-            </form>
-          </section>
-        )}
-
-        {step === 'chat' && (
-          <section className="mx-auto flex min-h-0 w-full max-w-[600px] flex-1 flex-col overflow-hidden border border-[var(--oo-line)] bg-[var(--oo-panel)]">
-            <header className="flex h-12 shrink-0 items-center justify-between border-b border-[var(--oo-line)] px-4">
-              <div className="flex min-w-0 items-center gap-3">
-                <button
-                  className="grid h-8 w-8 shrink-0 place-items-center border border-[var(--oo-line)] bg-[var(--oo-panel-strong)] text-[var(--oo-fg)] hover:border-[var(--oo-accent)]"
-                  onClick={() => {
-                    setStatus('');
-                    setStep('chats');
-                  }}
-                  type="button"
-                  aria-label="back to chats"
-                >
-                  <ArrowLeft size={15} />
-                </button>
-                <div className="min-w-0 truncate text-sm font-semibold">@{activePeer}</div>
-              </div>
-              <button
-                className="grid h-8 w-8 place-items-center border border-[var(--oo-line)] bg-[var(--oo-panel-strong)] text-[var(--oo-fg)] hover:border-[var(--oo-accent)]"
-                type="button"
-                aria-label="refresh"
-                onClick={() => loadConversation(session, activePeer)}
-              >
-                <RefreshCw size={14} />
-              </button>
-            </header>
-
-            <MessageList
-              messages={messages}
-              currentUsername={session.username}
-              onDownloadAttachment={downloadMessageAttachment}
-            />
-
-            <form className="shrink-0 border-t border-[var(--oo-line)] p-3" onSubmit={sendMessage}>
-              <div className="flex items-end gap-2 border border-[var(--oo-line)] bg-[var(--oo-panel-strong)] px-3 py-2">
-                <span className="pt-2 font-mono text-sm text-[var(--oo-muted)]">&gt;</span>
-                <textarea
-                  ref={messageInputRef}
-                  className="min-h-10 flex-1 resize-none border-0 bg-transparent py-2 text-sm leading-5 text-[var(--oo-fg)] outline-none"
-                  value={draft}
-                  onChange={(event) => setDraft(event.target.value)}
-                  onKeyDown={(event) => {
-                    const isEnter = event.key === 'Enter';
-                    const isCtrlM = event.ctrlKey && event.key.toLowerCase() === 'm';
-
-                    if ((isEnter || isCtrlM) && !event.shiftKey) {
-                      event.preventDefault();
-                      event.currentTarget.form?.requestSubmit();
-                    }
-                  }}
-                  aria-label="message"
-                  rows={1}
-                />
-                <button
-                  className="grid h-9 w-9 place-items-center border border-[var(--oo-line)] bg-transparent text-[var(--oo-fg)] disabled:opacity-40 enabled:hover:border-[var(--oo-accent)]"
-                  type="submit"
-                  aria-label="send message"
-                  disabled={draft.trim().length === 0}
-                >
-                  <SendHorizontal size={16} />
-                </button>
-              </div>
-            </form>
-          </section>
-        )}
-      </div>
+            if ((isEnter || isCtrlM) && !event.shiftKey) {
+              event.preventDefault();
+              event.currentTarget.form?.requestSubmit();
+            }
+          }}
+          onRefresh={() => void loadConversation(session, activePeer)}
+          onSubmit={sendMessage}
+          timeLabelFor={formatTime}
+        />
+      )}
 
       {isPasswordFormOpen && (
         <PasswordModal
@@ -777,7 +624,7 @@ function ChatApp({apiUrl}: WebChatProps) {
           onChangePassword={changePassword}
         />
       )}
-    </main>
+    </product.ChatAppShell>
   );
 }
 
@@ -839,57 +686,58 @@ function LandingPage({
 
   if (isWebScreen) {
     return (
-      <widgets.AuthPanel
+      <product.AuthPanel
         onSubmit={submitLogin}
         status={localStatus || (!isSubmitting && hasSubmittedAuth ? status : '')}
         fields={
           <>
-                <label className="block text-xs">
-                  <span className="mb-1 block text-[11px] text-[var(--oo-muted)]">username</span>
-                  <input
-                    className="h-9 w-full border border-[var(--oo-line)] bg-[var(--oo-panel-strong)] px-3 text-sm text-[var(--oo-fg)] outline-none transition focus:border-[var(--oo-accent)]"
-                    value={username}
-                    onChange={(event) => {
-                      setUsername(event.target.value);
-                      setLocalStatus('');
-                      setHasSubmittedAuth(false);
-                    }}
-                    autoComplete="username"
-                    autoFocus
-                  />
-                </label>
-                <label className="block text-xs">
-                  <span className="mb-1 block text-[11px] text-[var(--oo-muted)]">password</span>
-                  <input
-                    className="h-9 w-full border border-[var(--oo-line)] bg-[var(--oo-panel-strong)] px-3 text-sm text-[var(--oo-fg)] outline-none transition focus:border-[var(--oo-accent)]"
-                    value={password}
-                    onChange={(event) => {
-                      setPassword(event.target.value);
-                      setLocalStatus('');
-                      setHasSubmittedAuth(false);
-                    }}
-                    type="password"
-                    autoComplete="current-password"
-                  />
-                </label>
+            <patterns.FormField
+              autoComplete="username"
+              autoFocus
+              fieldSize="sm"
+              label="username"
+              labelClassName="text-[11px]"
+              value={username}
+              onChange={(event) => {
+                setUsername(event.target.value);
+                setLocalStatus('');
+                setHasSubmittedAuth(false);
+              }}
+            />
+            <patterns.FormField
+              autoComplete="current-password"
+              fieldSize="sm"
+              label="password"
+              labelClassName="text-[11px]"
+              type="password"
+              value={password}
+              onChange={(event) => {
+                setPassword(event.target.value);
+                setLocalStatus('');
+                setHasSubmittedAuth(false);
+              }}
+            />
           </>
         }
         submitControl={
-          <button
-            className="mt-4 inline-flex h-9 w-full items-center justify-center gap-2 border border-[var(--oo-accent)] bg-[var(--oo-accent)] px-4 text-sm font-semibold text-[var(--oo-accent-text)] disabled:opacity-50"
+          <primitives.Button
+            className="mt-4"
             disabled={isSubmitting || !username.trim() || !password}
+            fullWidth
+            size="sm"
             type="submit"
+            variant="primary"
           >
             <LogIn size={15} />
             {isSubmitting ? 'signing in...' : 'sign in'}
-          </button>
+          </primitives.Button>
         }
       />
     );
   }
 
   return (
-    <widgets.Landing
+    <product.Landing
       installCommand={installCommand}
       installCopyState={copyStates.install}
       authCommand={authCommand}
@@ -938,7 +786,7 @@ function DocsPage() {
   };
 
   return (
-    <widgets.DocsShell
+    <product.DocsShell
       appName={appName}
       githubHref={githubHref}
       installCommand={installCommand}
@@ -988,46 +836,41 @@ function PasswordModal({
   }
 
   return (
-    <widgets.PasswordDialog
+    <product.PasswordDialog
       status={localStatus || status}
-      headerIcon={<KeyRound size={15} color="var(--oo-accent)" />}
       onCancel={onCancel}
       onSubmit={submitPassword}
       onBackdropMouseDown={onCancel}
       onDialogMouseDown={(event) => event.stopPropagation()}
       fields={
         <>
-          <label className="block text-sm">
-            <span className="mb-1 block text-xs text-[var(--oo-muted)]">new password</span>
-            <input
-              ref={passwordInputRef}
-              className="h-10 w-full border border-[var(--oo-line)] bg-[var(--oo-panel-strong)] px-3 text-sm text-[var(--oo-fg)] outline-none transition focus:border-[var(--oo-accent)]"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              type="password"
-              autoComplete="new-password"
-            />
-          </label>
-          <label className="block text-sm">
-            <span className="mb-1 block text-xs text-[var(--oo-muted)]">confirm new password</span>
-            <input
-              className="h-10 w-full border border-[var(--oo-line)] bg-[var(--oo-panel-strong)] px-3 text-sm text-[var(--oo-fg)] outline-none transition focus:border-[var(--oo-accent)]"
-              value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              type="password"
-              autoComplete="new-password"
-            />
-          </label>
+          <patterns.FormField
+            ref={passwordInputRef}
+            autoComplete="new-password"
+            label="new password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            type="password"
+          />
+          <patterns.FormField
+            autoComplete="new-password"
+            label="confirm new password"
+            value={confirmPassword}
+            onChange={(event) => setConfirmPassword(event.target.value)}
+            type="password"
+          />
         </>
       }
       submitControl={
-        <button
-          className="mt-5 h-10 w-full border border-[var(--oo-accent)] bg-[var(--oo-accent)] px-4 text-sm font-semibold text-[var(--oo-accent-text)] disabled:opacity-50"
+        <primitives.Button
+          className="mt-5"
           disabled={isSubmitting || !password || !confirmPassword}
+          fullWidth
           type="submit"
+          variant="primary"
         >
           {isSubmitting ? 'saving...' : 'save'}
-        </button>
+        </primitives.Button>
       }
     />
   );
@@ -1174,100 +1017,6 @@ function normalizeAuthPayload(value: unknown): AuthPayload {
 }
 
 const authStorageKey = 'ooolala.auth';
-
-function MessageList({
-  messages,
-  currentUsername,
-  onDownloadAttachment
-}: {
-  messages: Message[];
-  currentUsername: string;
-  onDownloadAttachment: (message: Message, attachment: Attachment) => void;
-}) {
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-  const previousTailRef = useRef<string | null>(null);
-  let previousDateKey = '';
-
-  useEffect(() => {
-    const element = scrollRef.current;
-    const tail = messages.length > 0 ? messageSignature(messages[messages.length - 1]) : 'empty';
-    const previousTail = previousTailRef.current;
-
-    previousTailRef.current = tail;
-
-    if (!element) return;
-    if (previousTail !== null && previousTail === tail) return;
-
-    element.scrollTop = element.scrollHeight;
-  }, [messages]);
-
-  return (
-    <div ref={scrollRef} className="min-h-0 flex-1 overflow-auto px-4 py-4">
-      {messages.length === 0 ? (
-        <div className="grid min-h-full items-end justify-center pb-5 text-center text-sm text-[var(--oo-muted)]">
-          no messages yet. write below.
-        </div>
-      ) : (
-        messages.flatMap((message, messageIndex) => {
-          const currentDateKey = dateKey(message.insertedAt);
-          const rows = [];
-
-          if (currentDateKey !== previousDateKey) {
-            rows.push(<widgets.DateMarker key={`${currentDateKey}-${messageIndex}-header`} label={dateLabel(message.insertedAt)} />);
-            previousDateKey = currentDateKey;
-          }
-
-          rows.push(
-            <MessageRow
-              key={`${message.id}-${messageIndex}`}
-              message={message}
-              isMine={message.author === currentUsername}
-              onDownloadAttachment={onDownloadAttachment}
-            />
-          );
-          return rows;
-        })
-      )}
-    </div>
-  );
-}
-
-function messageSignature(message: Message) {
-  return [
-    message.room,
-    message.author,
-    message.insertedAt.getTime(),
-    message.body,
-    message.attachments.map((attachment) => `${attachment.id}:${attachment.filename}:${attachment.byteSize}`).join(',')
-  ].join('\u001f');
-}
-
-function MessageRow({
-  message,
-  isMine,
-  onDownloadAttachment
-}: {
-  message: Message;
-  isMine: boolean;
-  onDownloadAttachment: (message: Message, attachment: Attachment) => void;
-}) {
-  return (
-    <widgets.MessageBubble
-      attachments={message.attachments.map((attachment) => ({
-        id: attachment.id,
-        filename: attachment.filename,
-        byteSize: attachment.byteSize
-      }))}
-      body={message.body}
-      isMine={isMine}
-      onDownloadAttachment={(attachment) => {
-        const matched = message.attachments.find((candidate) => candidate.id === attachment.id);
-        if (matched) onDownloadAttachment(message, matched);
-      }}
-      time={formatTime(message.insertedAt)}
-    />
-  );
-}
 
 function authHeaders(session: Session) {
   return {
@@ -1423,10 +1172,6 @@ function formatTime(date: Date) {
   if (hour === 0) hour = 12;
 
   return `${hour}:${minute.toString().padStart(2, '0')} ${suffix}`;
-}
-
-function dateKey(date: Date) {
-  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 }
 
 function dateLabel(date: Date) {

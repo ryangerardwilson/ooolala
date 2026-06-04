@@ -6,8 +6,9 @@ Project: Ooolala
 
 Use only this project specialist for Ooolala-specific facts:
 
-- `specialists/product_engineer/ROLE.md` - product contract, brand constraints,
-  repo shape, runtime, auth, deployment, cost, and verification facts.
+- `specialists/product_engineer/ROLE.md` - product contract, marketing
+  objective, brand constraints, repo shape, runtime, auth, deployment, cost,
+  and verification facts.
 
 Root generalists own role behavior. This repository owns only Ooolala project
 facts.

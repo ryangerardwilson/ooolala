@@ -1,4 +1,4 @@
-export type ComponentLayer = 'layout' | 'colors' | 'fonts' | 'widgets';
+export type ComponentLayer = 'layout' | 'colors' | 'fonts' | 'primitives' | 'patterns' | 'product';
 
 export type ComponentApiRule = {
   layer: ComponentLayer;
@@ -23,8 +23,18 @@ export const componentApiRules = [
     mustNotOwn: ['spacing', 'colors', 'network behavior']
   },
   {
-    layer: 'widgets',
-    owns: ['buttons', 'inputs', 'message bubbles', 'product panels'],
+    layer: 'primitives',
+    owns: ['L1 basic UI atoms', 'buttons', 'inputs', 'textareas', 'icons', 'status text'],
     mustNotOwn: ['fetch calls', 'auth storage', 'deployment URLs']
+  },
+  {
+    layer: 'patterns',
+    owns: ['L2 reusable UX patterns', 'form fields', 'command rows', 'empty states', 'dialog forms', 'message bubbles'],
+    mustNotOwn: ['fetch calls', 'auth storage', 'deployment URLs', 'page-level product flows']
+  },
+  {
+    layer: 'product',
+    owns: ['L3 Ooolala product surfaces', 'landing', 'docs', 'auth panels', 'chat panels'],
+    mustNotOwn: ['fetch calls', 'auth storage', 'deployment URLs', 'raw repeated control styling']
   }
 ] satisfies ComponentApiRule[];
