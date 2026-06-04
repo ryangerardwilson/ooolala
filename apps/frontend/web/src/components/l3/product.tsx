@@ -1,8 +1,8 @@
 import {useEffect, useRef, type ChangeEventHandler, type FormEventHandler, type KeyboardEventHandler, type MouseEventHandler, type ReactNode, type Ref} from 'react';
 import {ArrowLeft, BookOpen, ExternalLink, KeyRound, LogOut, Plus, RefreshCw, SendHorizontal} from 'lucide-react';
-import * as layout from './layout';
-import * as patterns from './patterns';
-import * as primitives from './primitives';
+import * as layout from '../layout';
+import * as patterns from '../l2/patterns';
+import * as primitives from '../l1/primitives';
 import {TerminalSignalWordmark} from './terminal-signal';
 
 export type ChatAttachment = {

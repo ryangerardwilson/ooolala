@@ -1,8 +1,11 @@
 export * as colors from './colors';
 export * as fonts from './fonts';
+export * as l1 from './l1';
+export * as l2 from './l2';
+export * as l3 from './l3';
 export * as layout from './layout';
-export * as patterns from './patterns';
-export * as primitives from './primitives';
-export * as product from './product';
-export * as terminalSignal from './terminal-signal';
+export * as patterns from './l2/patterns';
+export * as primitives from './l1/primitives';
+export * as product from './l3/product';
+export * as terminalSignal from './l3/terminal-signal';
 export * from './contracts';

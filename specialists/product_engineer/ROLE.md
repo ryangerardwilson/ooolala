@@ -260,11 +260,11 @@ Web component API:
   placement.
 - `colors` owns semantic color roles, named schemes, and CSS variable values.
 - `fonts` owns body and mono font stacks plus font CSS variables.
-- `primitives` owns L1 basic UI atoms such as buttons, inputs, textareas,
+- `l1/primitives` owns L1 basic UI atoms such as buttons, inputs, textareas,
   icons, and status text.
-- `patterns` owns L2 reusable UX patterns such as form fields, command rows,
+- `l2/patterns` owns L2 reusable UX patterns such as form fields, command rows,
   empty states, dialog forms, and message bubbles.
-- `product` owns L3 Ooolala product surfaces such as landing, docs, auth, and
+- `l3/product` owns L3 Ooolala product surfaces such as landing, docs, auth, and
   chat panels.
 
 Components must not own auth, polling, API calls, storage, deployment URLs, or

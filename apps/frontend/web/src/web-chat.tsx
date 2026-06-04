@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState, type FormEvent} from 'react';
 import {LogIn} from 'lucide-react';
 import {patterns, primitives, product} from './components';
-import type {ChatAttachment, ChatMessage} from './components/product';
+import type {ChatAttachment, ChatMessage} from './components/l3/product';
 
 type Message = ChatMessage;
 

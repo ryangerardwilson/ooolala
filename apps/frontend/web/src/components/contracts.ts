@@ -1,7 +1,9 @@
-export type ComponentLayer = 'layout' | 'colors' | 'fonts' | 'primitives' | 'patterns' | 'product';
+export type ComponentLayer = 'layout' | 'colors' | 'fonts' | 'l1' | 'l2' | 'l3';
 
 export type ComponentApiRule = {
   layer: ComponentLayer;
+  namespace?: 'primitives' | 'patterns' | 'product';
+  directory?: string;
   owns: string[];
   mustNotOwn: string[];
 };
@@ -23,17 +25,23 @@ export const componentApiRules = [
     mustNotOwn: ['spacing', 'colors', 'network behavior']
   },
   {
-    layer: 'primitives',
+    layer: 'l1',
+    namespace: 'primitives',
+    directory: 'components/l1',
     owns: ['L1 basic UI atoms', 'buttons', 'inputs', 'textareas', 'icons', 'status text'],
     mustNotOwn: ['fetch calls', 'auth storage', 'deployment URLs']
   },
   {
-    layer: 'patterns',
+    layer: 'l2',
+    namespace: 'patterns',
+    directory: 'components/l2',
     owns: ['L2 reusable UX patterns', 'form fields', 'command rows', 'empty states', 'dialog forms', 'message bubbles'],
     mustNotOwn: ['fetch calls', 'auth storage', 'deployment URLs', 'page-level product flows']
   },
   {
-    layer: 'product',
+    layer: 'l3',
+    namespace: 'product',
+    directory: 'components/l3',
     owns: ['L3 Ooolala product surfaces', 'landing', 'docs', 'auth panels', 'chat panels'],
     mustNotOwn: ['fetch calls', 'auth storage', 'deployment URLs', 'raw repeated control styling']
   }

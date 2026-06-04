@@ -1,7 +1,7 @@
 import {forwardRef, type ButtonHTMLAttributes, type FormEventHandler, type InputHTMLAttributes, type MouseEventHandler, type ReactNode} from 'react';
 import {Copy, Download} from 'lucide-react';
-import * as layout from './layout';
-import * as primitives from './primitives';
+import * as layout from '../layout';
+import * as primitives from '../l1/primitives';
 
 export type CopyState = 'idle' | 'copied' | 'failed';
 
