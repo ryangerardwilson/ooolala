@@ -14,9 +14,9 @@ sessions.
 - `infra/vm/` - current Pulumi VM deployment.
 - `scripts/dev/` - local dev wrappers.
 - `scripts/prod/` - production deploy wrapper.
-- `context/INDEX.md` - project context routing for agents.
-- `context/product/SYSTEM_DESIGN.md` - Ooolala antifragile system design context.
-- `context/brand/BRAND.md` - Ooolala public voice, naming, and copy rules.
+- `specialists/INDEX.md` - project specialist routing for agents.
+- `specialists/product_engineer/ROLE.md` - Ooolala product, brand, repo,
+  runtime, deployment, cost, and verification facts.
 
 ## Install
 
