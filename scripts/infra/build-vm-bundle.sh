@@ -77,17 +77,16 @@ mkdir -p "$WORK/source" "$WORK/web"
   tar \
     --exclude='apps/backend/_build' \
     --exclude='apps/backend/deps' \
-    --exclude='apps/frontend/terminal/dist' \
     --exclude='apps/frontend/web/dist' \
     --exclude='*.tsbuildinfo' \
-    -cf - VERSION SKILLS.md package.json package-lock.json install.sh .dockerignore docker/backend.Dockerfile apps/backend apps/frontend \
+    -cf - VERSION SKILLS.md package.json package-lock.json install.sh .dockerignore docker/backend.Dockerfile apps/backend apps/frontend apps/terminal \
     | tar -C "$WORK/source" -xf -
 )
 
 cp -a "$ROOT/apps/frontend/web/dist/." "$WORK/web/"
 (
   cd "$WORK/source"
-  deterministic_tgz "$WORK/web/ooolala-source.tar.gz" VERSION SKILLS.md package.json package-lock.json install.sh .dockerignore docker/backend.Dockerfile apps/backend apps/frontend
+  deterministic_tgz "$WORK/web/ooolala-source.tar.gz" VERSION SKILLS.md package.json package-lock.json install.sh .dockerignore docker/backend.Dockerfile apps/backend apps/frontend apps/terminal
 )
 cat > "$WORK/web/install.sh" <<TXT
 #!/usr/bin/env bash

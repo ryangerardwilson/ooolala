@@ -114,7 +114,7 @@ status: tests passed; next: prod deploy check
 ```
 
 ```text
-blocked: npm test fails in apps/frontend/terminal. Should I fix it or pause?
+blocked: go test fails in apps/terminal. Should I fix it or pause?
 ```
 
 ```text

@@ -8,7 +8,7 @@ sessions.
 - `apps/backend/` - Elixir backend, auth, persistence, and chat domain.
 - `apps/backend/main.ex` - backend process entrypoint.
 - `apps/backend/lib/` - backend support modules.
-- `apps/frontend/terminal/` - Node.js terminal client: CLI plus Ink TUI mode.
+- `apps/terminal/` - Go terminal client: CLI plus Bubble Tea TUI mode.
 - `apps/frontend/web/` - React/Vite/Tailwind web app.
 - `apps/frontend/web/src/components/` - web component API: layout, colors,
   fonts, L1 primitives, L2 patterns, and L3 product surfaces.
@@ -31,7 +31,7 @@ ooolala send bob "hello from my terminal"
 
 Browser docs live at `https://ooolala.ryangerardwilson.com/docs`.
 
-The installer builds the terminal workspace and writes a thin launcher to
+The installer builds the Go terminal app and writes a thin launcher to
 `~/.local/bin`. Production state lives under `~/.ooolala`.
 
 ## CLI
@@ -60,7 +60,7 @@ ooolala skills
 ```
 
 `ooolala signout` clears saved local credentials without changing the backend
-account. `ooolala tui` launches the Ink TUI using saved CLI auth.
+account. `ooolala tui` launches the Bubble Tea TUI using saved CLI auth.
 Bob is the public welcome account for first DMs.
 `ooolala config` opens the user-editable local config.
 `ooolala skills` prints the agent-facing instructions from `SKILLS.md`.
@@ -109,8 +109,7 @@ scripts/dev/run-cli.sh tui
 ```
 
 The dev CLI stores credentials under `.dev/ooolala-home`, so it does not touch
-the installed production state. It also bootstraps missing Node workspace
-dependencies before launching the terminal client.
+the installed production state.
 
 Lower-level commands:
 
@@ -118,7 +117,7 @@ Lower-level commands:
 docker compose up -d postgres
 cd apps/backend && OOOLALA_STORE=postgres DATABASE_URL="postgres://ooolala:ooolala@127.0.0.1:5432/ooolala_dev" mix ooolala.db.migrate
 cd apps/backend && OOOLALA_BACKEND_HTTP=1 OOOLALA_STORE=postgres DATABASE_URL="postgres://ooolala:ooolala@127.0.0.1:5432/ooolala_dev" mix run --no-halt
-npm --workspace apps/frontend/terminal run tui
+cd apps/terminal && go run ./cmd/ooolala tui
 npm --workspace apps/frontend/web run dev
 ```
 
@@ -131,6 +130,7 @@ Run these before promotion:
 
 ```sh
 npm ci
+cd apps/terminal && go test ./...
 npm test --workspaces --if-present
 npm run build --workspaces --if-present
 cd apps/backend && mix test

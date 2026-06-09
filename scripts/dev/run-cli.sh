@@ -5,26 +5,13 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 DEV_ENV="$ROOT/.dev/dev.env"
 OOOLALA_HOME_VALUE="${OOOLALA_HOME:-$ROOT/.dev/ooolala-home}"
 
-ensure_node_deps() {
-  if [[ -x "$ROOT/node_modules/.bin/tsx" && -x "$ROOT/node_modules/.bin/vite" && -x "$ROOT/node_modules/.bin/tsc" ]]; then
+ensure_go() {
+  if command -v go >/dev/null 2>&1; then
     return 0
   fi
 
-  command -v node >/dev/null 2>&1 || {
-    printf 'missing required command: node\n' >&2
-    exit 1
-  }
-
-  command -v npm >/dev/null 2>&1 || {
-    printf 'missing required command: npm\n' >&2
-    exit 1
-  }
-
-  printf '==> node deps\n'
-  (
-    cd "$ROOT"
-    npm ci
-  )
+  printf 'missing required command: go\n' >&2
+  exit 1
 }
 
 usage() {
@@ -50,7 +37,7 @@ if [[ "${1:-}" == "help" ]]; then
 fi
 
 cd "$ROOT"
-ensure_node_deps
+ensure_go
 
 api_url="${OOOLALA_API:-}"
 
@@ -82,4 +69,5 @@ exec env \
   OOOLALA_HOME="$OOOLALA_HOME_VALUE" \
   OOOLALA_COMMAND_HINT="scripts/dev/run-cli.sh" \
   OOOLALA_AUTH_HINT="scripts/dev/run-cli.sh auth <username>" \
-  npm --silent --workspace apps/frontend/terminal run dev -- "$@"
+  OOOLALA_SOURCE="$ROOT" \
+  go run ./apps/terminal/cmd/ooolala "$@"

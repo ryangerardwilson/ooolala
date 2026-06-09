@@ -11,10 +11,8 @@ Claude sessions.
 - Prefer `username` over `handle` unless referring to UI that already says
   handle.
 - The backend is Elixir.
-- The terminal client is currently Node.js/TypeScript and must be migrated to
-  Go.
-- The current TUI is an Ink mode inside the terminal client. Treat Ink as
-  migration debt, not the target architecture.
+- The terminal client is Go.
+- The TUI is Bubble Tea.
 - The web app is React, Vite, and Tailwind.
 
 Target terminal stack: Go CLI plus Bubble Tea TUI with explicit L1/L2/L3
@@ -154,12 +152,7 @@ Visual direction:
 - `apps/backend/main.ex` - backend process entrypoint.
 - `apps/backend/lib/` - backend support modules only.
 - `apps/backend/lib/tasks/` - custom Mix database tasks.
-- `apps/frontend/terminal/` - current public CLI and Ink TUI mode; use as the
-  behavior source for the Go terminal migration.
-- Future Go terminal placement should keep the public command `ooolala` and
-  preserve the install/runtime contract. Prefer a narrow Go terminal app
-  boundary such as `apps/terminal/` or `cmd/ooolala` only after updating
-  scripts and installer paths in the same change.
+- `apps/terminal/` - current public Go CLI and Bubble Tea TUI mode.
 - `apps/frontend/web/` - React/Vite/Tailwind web app.
 - `apps/frontend/web/src/components/` - web component API.
 - `infra/vm/` - current Pulumi VM deployment.
@@ -185,10 +178,8 @@ backend sub-apps.
 `VERSION` is the single checked-in product version source. The Elixir backend
 and terminal client both read `VERSION`.
 
-`install.sh` currently builds the terminal workspace and installs a thin
-launcher in `~/.local/bin`. The Go migration must preserve that public install
-contract while replacing the Node/Ink runtime. Production installs `ooolala`
-with state under `~/.ooolala`.
+`install.sh` builds the Go terminal app and installs a thin launcher in
+`~/.local/bin`. Production installs `ooolala` with state under `~/.ooolala`.
 Hosted install wrappers must set their API URL, web URL, install URL, app
 name, and environment before execing the compiled terminal client.
 

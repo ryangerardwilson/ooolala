@@ -51,7 +51,7 @@ apps/backend/
   lib/auth*.ex           auth policy and credential stores
   lib/room_store*.ex     memory/Postgres room persistence
   lib/tasks              explicit database maintenance commands
-apps/frontend/terminal      Node.js CLI plus Ink TUI mode
+apps/terminal               Go CLI plus Bubble Tea TUI mode
 apps/frontend/web           React/Vite/Tailwind interface
 apps/frontend/web/src/components
                             web layout, colors, fonts, and widgets API
@@ -152,7 +152,7 @@ The CLI should stay compact and backend-backed:
 - `ooolala watch <username> incoming` keeps polling for incoming messages.
 - `ooolala open <username>` creates or restores a known chat.
 - `ooolala close <username>` hides a chat from the chat list without deleting the transcript.
-- `ooolala tui` launches the Node/Ink TUI from the CLI surface with saved CLI
+- `ooolala tui` launches the Bubble Tea TUI from the CLI surface with saved CLI
   credentials; the TUI does not own a separate login screen.
 - `/` serves the React product page with CLI-first positioning and CLI install
   commands. `/docs` serves a static command-index page from the same Vite

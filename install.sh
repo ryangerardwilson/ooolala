@@ -40,16 +40,8 @@ require_cmd() {
   fi
 }
 
-require_node() {
-  require_cmd node
-  require_cmd npm
-
-  local major
-  major="$(node -p 'Number(process.versions.node.split(".")[0])')"
-  if ((major < 18)); then
-    printf 'node 18 or newer is required; found %s\n' "$(node -v)" >&2
-    exit 1
-  fi
+require_go() {
+  require_cmd go
 }
 
 run_quiet() {
@@ -121,22 +113,19 @@ copy_source() {
 
 build_cli() {
   local source="$INSTALL_ROOT/src"
-  local node_bin current_version
+  local current_version
   mkdir -p "$INSTALL_ROOT/bin" "$PUBLIC_BIN_DIR"
-  require_node
-
-  node_bin="$(command -v node)"
+  require_go
 
   (
-    cd "$source"
-    run_quiet "npm install terminal dependencies" \
-      npm install --workspace apps/frontend/terminal --include=dev --no-audit --no-fund
+    cd "$source/apps/terminal"
+    run_quiet "test terminal client" \
+      go test ./...
     run_quiet "build terminal client" \
-      npm --workspace apps/frontend/terminal run build
+      go build -o "$INSTALL_ROOT/bin/ooolala-runtime" ./cmd/ooolala
   )
 
-  chmod +x "$source/apps/frontend/terminal/dist/index.js"
-  rm -f "$INSTALL_ROOT/bin/ooolala-runtime" "$INSTALL_ROOT/bin/ooolala-native"
+  chmod +x "$INSTALL_ROOT/bin/ooolala-runtime"
   current_version="$(version)"
 
   cat > "$PUBLIC_BIN_DIR/$APP" <<TXT
@@ -159,7 +148,7 @@ export OOOLALA_INSTALL_URL="\${OOOLALA_INSTALL_URL:-$INSTALL_URL}"
 export OOOLALA_SOURCE="\${OOOLALA_SOURCE:-\$OOOLALA_INSTALL_ROOT/src}"
 export OOOLALA_WELCOME_USER="\${OOOLALA_WELCOME_USER:-$WELCOME_USER}"
 
-exec "$node_bin" "\$OOOLALA_INSTALL_ROOT/src/apps/frontend/terminal/dist/index.js" "\$@"
+exec "\$OOOLALA_INSTALL_ROOT/bin/ooolala-runtime" "\$@"
 TXT
   chmod +x "$PUBLIC_BIN_DIR/$APP"
 }

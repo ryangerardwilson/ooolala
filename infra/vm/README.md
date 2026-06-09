@@ -153,8 +153,8 @@ Remote services:
 curl "$OOOLALA_VM_PUBLIC_URL/"
 curl "$OOOLALA_VM_PUBLIC_URL/api/health"
 curl "$OOOLALA_VM_PUBLIC_URL/api/version?format=text"
-npm --workspace apps/frontend/terminal run build
-node apps/frontend/terminal/dist/index.js version
+cd apps/terminal && go test ./...
+cd apps/terminal && go run ./cmd/ooolala version
 ```
 
 `pulumi destroy` removes the stack directory, nginx site, backend container, and

@@ -14,20 +14,11 @@ mkdir -p "$TARGET_DIR"
 
 (
   cd "$ROOT"
-  npm --workspace apps/frontend/terminal run build >/dev/null
-  npm --workspace apps/frontend/terminal run snapshot > "$TARGET_DIR/tui-snapshot.txt"
+  (cd apps/terminal && go test ./... >/dev/null)
+  (cd apps/terminal && go run ./cmd/ooolala help > "$TARGET_DIR/cli-help.txt")
+  (cd apps/terminal && go run ./cmd/ooolala version > "$TARGET_DIR/cli-version.txt")
+  printf 'Bubble Tea TUI source: apps/terminal/internal/tui\n' > "$TARGET_DIR/tui-snapshot.txt"
   cp apps/frontend/web/src/components/contracts.ts "$TARGET_DIR/component-contracts.ts"
-
-  if [[ -f apps/frontend/terminal/dist/index.js ]]; then
-    node apps/frontend/terminal/dist/index.js help > "$TARGET_DIR/cli-help.txt"
-    node apps/frontend/terminal/dist/index.js version > "$TARGET_DIR/cli-version.txt"
-  else
-    {
-      printf 'CLI build artifact not found.\n'
-      printf 'Run: npm --workspace apps/frontend/terminal run build\n'
-    } > "$TARGET_DIR/cli-help.txt"
-    printf 'not-built\n' > "$TARGET_DIR/cli-version.txt"
-  fi
 )
 
 backend_status="not checked"

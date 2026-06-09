@@ -3,15 +3,15 @@
   "private": true,
   "description": "CLI-first, TUI-second, web-third chat app.",
   "workspaces": [
-    "apps/frontend/terminal",
     "apps/frontend/web",
     "infra/vm"
   ],
   "scripts": {
     "test": "npm --workspaces --if-present run test",
     "build": "npm --workspaces --if-present run build",
-    "cli": "npm --workspace apps/frontend/terminal run dev",
-    "tui": "npm --workspace apps/frontend/terminal run tui",
+    "cli": "cd apps/terminal && go run ./cmd/ooolala",
+    "tui": "cd apps/terminal && go run ./cmd/ooolala tui",
+    "terminal:test": "cd apps/terminal && go test ./...",
     "web": "npm --workspace apps/frontend/web run dev"
   }
 }
